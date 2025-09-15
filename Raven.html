@@ -1,1 +1,621 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>CHAOS INSURGENCY TERMINAL - RAVEN</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://unpkg.com/feather-icons"></script>
+  <script src="https://cdn.jsdelivr.net/npm/feather-icons/dist/feather.min.js"></script>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=VT323&display=swap');
+
+    body {
+      font-family: 'VT323', monospace;
+      overflow: hidden;
+      background-color: #000;
+      color: #0f0;
+    }
+
+    .grid-bg {
+      background-image: 
+        url('https://images-wixmp-ed30a86b8c4ca887773594c2.wixmp.com/f/18f8123e-b0de-4ea0-add1-845db168b004/dgcurdx-15724632-d02d-427d-acbf-2a4ac4a85e66.png/v1/fill/w_1280,h_857,q_80,strp/raven_bird_wallpaper_with_8k_and_ultra_hd_by_coder980_dgcurdx-fullview.jpg?token=eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ1cm46YXBwOjdlMGQxODg5ODIyNjQzNzNhNWYwZDQxNWVhMGQyNmUwIiwiaXNzIjoidXJuOmFwcDo3ZTBkMTg4OTgyMjY0MzczYTVmMGQ0MTVlYTBkMjZlMCIsIm9iaiI6W1t7ImhlaWdodCI6Ijw9ODU3IiwicGF0aCI6Ii9mLzE4ZjgxMjNlLWIwZGUtNGVhMC1hZGQxLTg0NWRiMTY4YjAwNC9kZ2N1cmR4LTE1NzI0NjMyLWQwMmQtNDI3ZC1hY2JmLTJhNGFjNGE4NWU2Ni5wbmciLCJ3aWR0aCI6Ijw9MTI4MCJ9XV0sImF1ZCI6WyJ1cm46c2VydmljZTppbWFnZS5vcGVyYXRpb25zIl19._sNtArHE38YwbIJ9G5fVwthxow8C3veznn7_kC7cJBw'),
+        linear-gradient(rgba(0, 255, 0, 0.05) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(0, 255, 0, 0.05) 1px, transparent 1px);
+      background-size: cover, 20px 20px, 20px 20px;
+      background-blend-mode: overlay;
+    }
+
+    .crt-effect {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background:
+        linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.25) 50%),
+        linear-gradient(90deg, rgba(255, 0, 0, 0.06),
+                            rgba(0, 255, 0, 0.02),
+                            rgba(0, 0, 255, 0.06));
+      background-size: 100% 2px, 3px 100%;
+      pointer-events: none;
+      z-index: 9999;
+      animation: flicker 0.15s infinite;
+    }
+
+    @keyframes flicker {
+      0% { opacity: 0.9; }
+      50% { opacity: 1; }
+      100% { opacity: 0.9; }
+    }
+
+    .terminal-text {
+      text-shadow: 0 0 5px #0f0;
+    }
+
+    .btn-glow:hover { box-shadow: 0 0 10px #0f0; }
+
+    .icon { transition: all 0.3s ease-in-out; }
+    .icon:hover {
+      filter: drop-shadow(0 0 8px rgba(0, 255, 0, 0.8));
+      transform: scale(1.05);
+    }
+
+    @keyframes spin { from { transform: rotate(0); } to { transform: rotate(360deg); } }
+
+    /* Windows */
+    .window { animation: windowOpen 0.25s ease-in-out forwards; opacity: 0; transform: scale(0.95); }
+    @keyframes windowOpen { to { opacity: 1; transform: scale(1); } }
+    .window-close-anim { animation: windowClose 0.25s ease-in-out forwards; }
+    @keyframes windowClose { to { opacity: 0; transform: scale(0.95); } }
+
+    /* Clock blink */
+    .cursor-blink { animation: blink 1s infinite ease-in-out; }
+    @keyframes blink { 0% {opacity: .2;} 50% {opacity:1;} 100% {opacity:.2;} }
+  </style>
+</head>
+<body class="grid-bg h-screen overflow-hidden">
+  <div class="crt-effect"></div>
+
+  <!-- Loading Screen -->
+  <div id="loading-screen" class="fixed inset-0 bg-black z-50 flex items-center justify-center">
+    <div class="text-center">
+      <div class="mb-4">
+        <img src="https://upload.wikimedia.org/wikipedia/commons/b/bf/Chaos_Insurgency_logo.png"
+             alt="Chaos Insurgency Logo"
+             class="mx-auto w-32 h-32 animate-pulse">
+      </div>
+      <div class="text-green-500 text-xl mb-2">CHAOS INSURGENCY</div>
+      <div class="text-green-500 mb-8">GAINING BRAVO PERMS...</div>
+      <div class="w-64 h-1 bg-green-900 mx-auto overflow-hidden">
+        <div id="loading-progress" class="h-full bg-green-500" style="width: 0%"></div>
+      </div>
+      <div id="loading-status" class="text-green-500 text-sm mt-2">Initializing Raven access...</div>
+    </div>
+  </div>
+
+  <!-- Desktop -->
+  <div id="desktop" class="hidden h-full w-full p-4 relative">
+    <!-- Taskbar -->
+    <div class="fixed bottom-0 left-0 right-0 h-10 bg-black bg-opacity-90 border-t border-green-500 flex items-center px-2 z-30">
+      <button class="h-8 w-8 bg-green-900 border border-green-500 flex items-center justify-center mr-2 hover:bg-green-800 transition-colors">
+        <img src="https://upload.wikimedia.org/wikipedia/commons/b/bf/Chaos_Insurgency_logo.png" alt="Start" class="w-5 h-5">
+      </button>
+      <div class="ml-auto flex items-center bg-black bg-opacity-70 border border-green-500 px-3 py-1 text-green-500">
+        <i data-feather="clock" class="mr-2 w-4 h-4"></i>
+        <span id="clock">00:00:00</span>
+      </div>
+    </div>
+
+    <!-- Desktop Icons -->
+    <div class="absolute left-4 top-4 flex flex-col gap-6 w-32" style="bottom: 50px;">
+      <!-- Chaos Insurgency Database -->
+      <div class="icon group flex flex-col items-center cursor-pointer" onclick="launchTerminal()">
+        <div class="w-12 h-12 bg-green-900 border border-green-500 flex items-center justify-center mb-1 group-hover:bg-green-800 group-hover:border-green-300 transition-all duration-200">
+          <i data-feather="terminal" class="text-green-500 group-hover:text-green-300"></i>
+        </div>
+        <span class="text-green-500 text-center text-sm group-hover:text-green-300 group-hover:drop-shadow-[0_0_8px_rgba(0,255,0,0.8)] transition-all duration-200">Chaos Insurgency<br>Database</span>
+      </div>
+      
+      <!-- Surveillance Control -->
+      <div class="icon group flex flex-col items-center cursor-pointer" onclick="launchSurveillance()">
+        <div class="w-12 h-12 bg-green-900 border border-green-500 flex items-center justify-center mb-1 group-hover:bg-green-800 group-hover:border-green-300 transition-all duration-200">
+          <i data-feather="video" class="text-green-500 group-hover:text-green-300"></i>
+        </div>
+        <span class="text-green-500 text-center text-sm group-hover:text-green-300 group-hover:drop-shadow-[0_0_8px_rgba(0,255,0,0.8)] transition-all duration-200">Surveillance Control</span>
+      </div>
+      
+      <!-- SELF DESTRUCT -->
+      <div class="icon group flex flex-col items-center cursor-pointer" onclick="selfDestruct()" title="Are you sure about this?">
+        <div class="w-12 h-12 bg-red-900 border border-red-500 flex items-center justify-center mb-1 group-hover:bg-red-800 group-hover:border-red-300 transition-all duration-200">
+          <i data-feather="alert-octagon" class="text-red-500 group-hover:text-red-300"></i>
+        </div>
+        <span class="text-red-500 text-center text-sm group-hover:text-red-300 group-hover:drop-shadow-[0_0_8px_rgba(255,0,0,0.8)] transitionall duration-200">SELF DESTRUCT</span>
+      </div>
+      
+      <!-- Recruit Chat -->
+      <div class="icon group flex flex-col items-center cursor-pointer" onclick="launchChat()">
+        <div class="w-12 h-12 bg-green-900 border border-green-500 flex items-center justify-center mb-1 group-hover:bg-green-800 group-hover:border-green-300 transition-all duration-200">
+          <i data-feather="message-square" class="text-green-500 group-hover:text-green-300"></i>
+        </div>
+        <span class="text-green-500 text-center text-sm group-hover:text-green-300 group-hover:drop-shadow-[0_0_8px_rgba(0,255,0,0.8)] transition-all duration-200">Recruit Chat.exe</span>
+      </div>
+      
+      <!-- Chaos Solitaire -->
+      <div class="icon group flex flex-col items-center cursor-pointer" onclick="launchSolitaire()">
+        <div class="w-12 h-12 bg-green-900 border border-green-500 flex items-center justify-center mb-1 group-hover:bg-green-800 group-hover:border-green-300 transition-all duration-200">
+          <i data-feather="layers" class="text-green-500 group-hover:text-green-300"></i>
+        </div>
+        <span class="text-green-500 text-center text-sm group-hover:text-green-300 group-hover:drop-shadow-[0_0_8px_rgba(0,255,0,0.8)] transition-all duration-200">Chaos Solitaire</span>
+      </div>
+      
+      <!-- Totally Not Malware -->
+      <div class="icon group flex flex-col items-center cursor-pointer" onclick="launchMalware()">
+        <div class="w-12 h-12 bg-red-900 border border-red-500 flex items-center justify-center mb-1 group-hover:bg-red-800 group-hover:border-red-300 transition-all duration-200">
+          <i data-feather="alert-triangle" class="text-red-500 group-hover:text-red-300"></i>
+        </div>
+        <span class="text-red-500 text-center text-sm group-hover:text-red-300 group-hover:drop-shadow-[0_0_8px_rgba(255,0,0,0.8)] transition-all duration-200">Totally_Not_Malware.exe</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Surveillance Window -->
+  <div id="surveillance-window" class="hidden fixed bg-black border border-green-500 max-w-[90vw] max-h-[90vh] w-96 z-40 cursor-move window">
+    <div class="bg-green-900 text-green-500 p-2 flex justify-between items-center">
+      <span>Surveillance Control</span>
+      <button onclick="closeSurveillance()" class="text-red-500 window-close">
+        <i data-feather="x" class="w-4 h-4"></i>
+      </button>
+    </div>
+    <div class="h-64 bg-black border-b border-green-500 flex items-center justify-center">
+      <img id="camera-feed" src="images/cam1.gif" class="h-full w-full object-contain" alt="Camera Feed">
+    </div>
+    <div class="p-2 flex justify-around">
+      <button onclick="switchCamera(1)" class="bg-green-900 hover:bg-green-800 text-green-500 px-3 py-1 border border-green-500">CAM1</button>
+      <button onclick="switchCamera(2)" class="bg-green-900 hover:bg-green-800 text-green-500 px-3 py-1 border border-green-500">CAM2</button>
+      <button onclick="switchCamera(3)" class="bg-green-900 hover:bg-green-800 text-green-500 px-3 py-1 border border-green-500">CAM3</button>
+      <button onclick="switchCamera(4)" class="bg-green-900 hover:bg-green-800 text-green-500 px-3 py-1 border border-green-500">CAM4</button>
+    </div>
+  </div>
+
+  <!-- Terminal Window -->
+  <div id="terminal-window" class="hidden fixed inset-0 bg-black bg-opacity-90 z-50 flex items-center justify-center p-4 window">
+    <div class="relative w-full max-w-[90vw] max-h-[90vh] bg-black border border-green-500 overflow-hidden flex flex-col">
+      <button onclick="closeTerminal()" class="absolute top-2 right-2 text-red-500 window-close">
+        <i data-feather="x" class="w-6 h-6"></i>
+      </button>
+      <div class="p-4 h-full overflow-y-auto terminal-text">
+        <pre class="text-green-500 text-lg">
+██████╗ ██╗  ██╗ █████╗  ██████╗ ███████╗
+██╔══██╗██║  ██║██╔══██╗██╔════╝ ██╔════╝
+██████╔╝███████║███████║██║  ███╗█████╗  
+██╔═══╝ ██╔══██║██╔══██║██║   ██║██╔══╝  
+██║     ██║  ██║██║  ██║╚██████╔╝███████╗
+╚═╝     ╚═╝  ╚═╝╚═╝  ╚═╝ ╚═════╝ ╚══════╝
+CHAOS INSURGENCY DATABASE TERMINAL v1.0
+        </pre>
+        <div id="terminal-content" class="mt-4">
+          <p class="text-green-500">> Welcome to Chaos Insurgency Database Terminal</p>
+          <p class="text-green-500">> Secondary authentication required</p>
+          <div class="mt-4">
+            <p class="text-green-500">Username: <input type="text" id="term-user" class="bg-black border-b border-green-500 text-green-500 px-2"></p>
+            <p class="text-green-500 mt-2">Password: <input type="password" id="term-pass" class="bg-black border-b border-green-500 text-green-500 px-2"></p>
+            <button id="term-login" class="mt-4 bg-green-900 hover:bg-green-800 text-green-500 py-1 px-4 border border-green-500 btn-glow">AUTHENTICATE</button>
+          </div>
+        </div>
+        <div id="terminal-commands" class="hidden mt-4">
+          <p class="text-green-500">> Authentication successful. Welcome, Agent.</p>
+          <p class="text-green-500">> Type HELP for available commands</p>
+          <div class="mt-4 flex">
+            <span class="text-green-500">></span>
+            <input type="text" id="command-input" class="bg-black text-green-500 px-2 flex-grow" placeholder="Enter command...">
+            <span class="text-green-500 cursor-blink">_</span>
+          </div>
+          <div id="command-output" class="mt-4"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+
+  <!-- Audio -->
+  <audio id="boot-sound" src="Audio/boot.mp3" preload="auto"></audio>
+  <audio id="click-sound" src="Audio/click.mp3" preload="auto"></audio>
+  <audio id="login-sound" src="Audio/login.mp3" preload="auto"></audio>
+  <audio id="error-sound" src="Audio/error.mp3" preload="auto"></audio>
+  <audio id="terminal-sound" src="Audio/terminal-loop.mp3" preload="auto" loop></audio>
+  <audio id="window-open" src="Audio/window-open.mp3" preload="auto"></audio>
+  <audio id="window-close" src="Audio/window-close.mp3" preload="auto"></audio>
+  <audio id="glitch-sound" src="Audio/glitch.mp3" preload="auto"></audio>
+  <audio id="typing-sound" src="Audio/typing.mp3" preload="auto"></audio>
+  <audio id="static-sound" src="Audio/static.mp3" preload="auto"></audio>
+  <audio id="hum-sound" src="Audio/ambience-hum.mp3" preload="auto" loop></audio>
+  <audio id="keypress-sound" src="Audio/keypress.mp3" preload="auto"></audio>
+  <audio id="lock-sound" src="Audio/lock.mp3" preload="auto"></audio>
+  <audio id="loading-sound" src="Audio/loading.mp3" preload="auto"></audio>
+  <audio id="cam-switch" src="Audio/cam-switch.mp3" preload="auto"></audio>
+
+  <script>
+    // Desktop shortcut functions
+    function selfDestruct() {
+      window.open("https://www.youtube.com/watch?v=dQw4w9WgXcQ", "_blank");
+      document.getElementById('click-sound').currentTime = 0;
+      document.getElementById('click-sound').volume = 0.3;
+      document.getElementById('click-sound').play();
+    }
+    
+    function launchChat() {
+      const chatWindow = document.createElement('div');
+      chatWindow.className = 'fixed bg-black border border-green-500 max-w-[90vw] max-h-[90vh] w-80 z-40 cursor-move window';
+      chatWindow.style.top = '50%';
+      chatWindow.style.left = '50%';
+      chatWindow.style.transform = 'translate(-50%, -50%)';
+      
+      const chatHeader = document.createElement('div');
+      chatHeader.className = 'bg-green-900 text-green-500 p-2 flex justify-between items-center';
+      chatHeader.innerHTML = `
+        <span>Recruit Chat.exe</span>
+        <button onclick="this.parentElement.parentElement.remove()" class="text-red-500 window-close">
+          <i data-feather="x" class="w-4 h-4"></i>
+        </button>
+      `;
+      
+      const chatContent = document.createElement('div');
+      chatContent.className = 'p-4 h-80 overflow-y-auto terminal-text';
+      chatContent.innerHTML = `
+        <p class="text-green-500">> Connecting to secure channel...</p>
+        <p class="text-green-500">> Connection established.</p>
+        <p class="text-green-500">> Priority channel: Site-66 operations</p>
+        <p class="text-green-500">> Last messages:</p>
+        <p class="text-green-500">[UNKNOWN_USER]: Did you see the size of that anomaly?</p>
+        <p class="text-green-500">[UNKNOWN_USER]: I swear the vending machine ate my ID card</p>
+        <p class="text-green-500">[UNKNOWN_USER]: Who took my coffee? This is an emergency!</p>
+        <p class="极green-500">[UNKNOWN_USER]: The janitor is acting sus again</p>
+        <p class="text-green-500">[UNKNOWN_USER]: Found a pizza in the containment chamber</p>
+        <p class="text-green-500">[UNKNOWN_USER]: Anyone else hearing screams or is it just me?</p>
+        <p class="text-green-500">[UNKNOWN_USER]: BRB, gotta contain my sanity</p>
+        <p class="text-green-500">[UNKNOWN_USER]: The walls are whispering memes</p>
+      `;
+      
+      const chatInput = document.createElement('div');
+      chatInput.className = 'p-2 border-t border-green-500 flex';
+      chatInput.innerHTML = `
+        <input type="text" id="chat-input" class="bg-black text-green-500 border border-green-500 px-2 py-1 flex-grow" placeholder="Type message...">
+        <button onclick="sendChatMessage()" class="bg-green-900 hover:bg-green-800 text-green-500 px-3 py-1 border border-green-500 ml-2">SEND</button>
+      `;
+      
+      chatWindow.appendChild(chatHeader);
+      chatWindow.appendChild(chatContent);
+      chatWindow.appendChild(chatInput);
+      document.body.appendChild(chatWindow);
+      feather.replace();
+      document.getElementById('click-sound').currentTime = 0;
+      document.getElementById('click-sound').volume = 0.3;
+      document.getElementById('click-sound').play();
+      document.getElementById('window-open').currentTime = 0;
+      document.getElementById('window-open').volume = 0.3;
+      document.getElementById('window-open').play();
+      
+      // Make window draggable
+      makeDraggable(chatWindow, chatHeader);
+      
+      // Auto-scroll to bottom
+      chatContent.scrollTop = chatContent.scrollHeight;
+      
+      // Auto-update chat with random messages
+      const funnyMessages = [
+        "The coffee machine is sentient I swear",
+        "Who keeps moving my chair?",
+        "Found a D-class playing solitaire with SCP-682",
+        "The vending machine took my money again",
+        "MTF stands for 'Missing The Fun' right?",
+        "Containment breach? Nah just Dave from accounting",
+        "Why does the cafeteria serve green jello?",
+        "I think the walls are watching me",
+        "The director just walked into a wall and disappeared",
+        "Found a pizza box in the incinerator",
+        "Who keeps setting all the clocks to 3:33 AM?",
+        "The janitor knows too much",
+        "I saw a guy in a chicken suit running down hall B",
+        "The water cooler is dispensing something... not water",
+        "Why do all the doors open by themselves at night?"
+      ];
+      
+      setInterval(() => {
+        if (Math.random() > 0.7) {
+          const message = funnyMessages[Math.floor(Math.random() * funnyMessages.length)];
+          const newMessage = document.createElement('p');
+          newMessage.className = 'text-green-500';
+          newMessage.textContent = `[UNKNOWN_USER]: ${message}`;
+          chatContent.appendChild(newMessage);
+          chatContent.scrollTop = chatContent.scrollHeight;
+        }
+      }, 10000);
+    }
+    
+    function sendChatMessage() {
+      const input = document.getElementById('chat-input');
+      if (input.value.trim() !== '') {
+        document.getElementById('error-sound').currentTime = 0;
+        document.getElementById('error-sound').volume = 0.3;
+        document.getElementById('error-sound').play();
+        const chatContent = document.querySelector('.terminal-text');
+        const errorMessage = document.createElement('p');
+        errorMessage.className = 'text-red-500';
+        errorMessage.textContent = '> ERROR: Invalid user credentials. Message not delivered.';
+        chatContent.appendChild(errorMessage);
+        chatContent.scrollTop = chatContent.scrollHeight;
+        input.value = '';
+      }
+    }
+    
+    function launchSolitaire() {
+      const solitaireWindow = document.createElement('div');
+      solitaireWindow.className = 'fixed bg-black border border-green-500 max-w-[90vw] max极h-[90vh] w-64 z-40 cursor-move window';
+      solitaireWindow.style.top = '50%';
+      solitaireWindow.style.left = '50%';
+      solitaireWindow.style.transform = 'translate(-50%, -50%)';
+      
+      const solitaireHeader = document.createElement('div');
+      solitaireHeader.className = 'bg-green-900 text-green-500 p-2 flex justify-between items-center';
+      solitaireHeader.innerHTML = `
+        <span>Chaos Solitaire</span>
+        <button onclick="this.parentElement.parentElement.remove()" class="text-red-500 window-close">
+          <i data-feather="x" class="w-4 h-4"></i>
+        </button>
+      `;
+      
+      const solitaireContent = document.createElement('div');
+      solitaireContent.className = 'p-4 h-full flex items-center justify-center';
+      solitaireContent.innerHTML = `
+        <p class="text-green-500 text-center">ERROR: Card textures missing.<br>Contact your local anomaly for assistance.</p>
+      `;
+      
+      solitaireWindow.appendChild(solitaireHeader);
+      solitaireWindow.appendChild(solitaireContent);
+      document.body.appendChild(solitaireWindow);
+      feather.replace();
+      document.getElementById('click-sound').currentTime = 0;
+      document.getElementById('click-sound').volume = 0.3;
+      document.getElementById('click-sound').play();
+      document.getElementById('window-open').currentTime = 0;
+      document.getElementById('window-open').volume = 0.3;
+      document.getElementById('window-open').play();
+      
+      // Make window draggable
+      makeDraggable(solitaireWindow, solitaireHeader);
+    }
+    
+    function launchMalware() {
+      const malwareWindow = document.createElement('div');
+      malwareWindow.className = 'fixed bg-black border border-red-500 max-w-[90vw] max-h-[90vh] w-64 z-40 cursor-move window';
+      malwareWindow.style.top = '50%';
+      malwareWindow.style.left = '50%';
+      malwareWindow.style.transform = 'translate(-50%, -50%)';
+      
+      const malwareHeader = document.createElement('div');
+      malwareHeader.className = 'bg-red-900 text-red-500 p-2 flex justify-between items-center';
+      malwareHeader.innerHTML = `
+        <span>WARNING</span>
+        <button onclick="this.parentElement.parentElement.remove()" class="text-red-500 window-close">
+          <i data-feather="x" class="w-4 h-4"></i>
+        </button>
+      `;
+      
+      const malwareContent = document.createElement('div');
+      malwareContent.className = 'p-4 h-full flex items-center justify-center';
+      malwareContent.innerHTML = `
+        <p class="text-red-500 text-center">System compromised.<br>Just kidding.</p>
+      `;
+      
+      malwareWindow.appendChild(malwareHeader);
+      malwareWindow.appendChild(malwareContent);
+      document.body.appendChild(malwareWindow);
+      feather.replace();
+      document.getElementById('click-sound').currentTime = 0;
+      document.getElementById('click-sound').volume = 0.3;
+      document.getElementById('click-sound').play();
+      document.getElementById('window-open').currentTime = 0;
+      document.getElementById('window-open').volume = 0.3;
+      document.getElementById('window-open').play();
+      
+      // Make window draggable
+      makeDraggable(malwareWindow, malwareHeader);
+    }
+    
+    function makeDraggable(element, header) {
+      let isDragging = false;
+      let offsetX, offsetY;
+      
+      header.addEventListener('mousedown', (e) => {
+        isDragging = true;
+        offsetX = e.clientX - element.getBoundingClientRect().left;
+        offsetY = e.clientY - element.getBoundingClientRect().top;
+        element.style.cursor = 'grabbing';
+      });
+      
+      document.addEventListener('mousemove', (e) => {
+        if (isDragging) {
+          let newLeft = e.clientX - offsetX;
+          let newTop = e.clientY - offsetY;
+          
+          // Keep window within viewport bounds
+          const rect = element.getBoundingClientRect();
+          const maxLeft = window.innerWidth - rect.width;
+          const maxTop = window.innerHeight - rect.height;
+          
+          newLeft = Math.max(0, Math.min(newLeft, maxLeft));
+          newTop = Math.max(0, Math.min(newTop, maxTop));
+          
+          element.style.left = new极eft + 'px';
+          element.style.top = newTop + 'px';
+        }
+      });
+      
+      document.addEventListener('mouseup', () => {
+        isDragging = false;
+        element.style.cursor = 'move';
+      });
+    }
+
+    // Surveillance functions
+    let currentFeed = 1;
+    let isDragging = false;
+    let offsetX, offsetY;
+
+    function launchSurveillance() {
+      document.getElementById('click-sound').currentTime = 0;
+      document.getElementById('click-sound').volume = 0.3;
+      document.getElementById('click-sound').play();
+      document.getElementById('window-open').currentTime = 0;
+      document.getElementById('window-open').volume = 0.3;
+      document.getElementById('window-open').play();
+      document.getElementById('surveillance-window').classList.remove('hidden');
+      document.getElementById('surveillance-window').classList.add('window');
+      feather.replace();
+    }
+
+    function closeSurveillance() {
+      document.getElementById('click-sound').currentTime = 0;
+      document.getElementById('click-sound').volume = 0.3;
+      document.getElementById('click-sound').play();
+      document.getElementById('window-close').currentTime = 0;
+      document.getElementById('window-close').volume = 0.3;
+      document.getElementById('window-close').play();
+      document.getElementById('surveillance-window').classList.add('window-close-anim');
+      setTimeout(() => {
+        document.getElementById('surveillance-window').classList.add('hidden');
+        document.getElementById('surveillance-window').classList.remove('window-close-anim');
+        document.getElementById('surveillance-window').classList.remove('window');
+      }, 250);
+    }
+
+    function switchCamera(camNum) {
+      document.getElementById('cam-switch').currentTime = 0;
+      document.getElementById('cam-switch').volume = 0.3;
+      document.getElementById('cam-switch').play();
+      currentFeed = camNum;
+      const feeds = {
+        1: 'images/cam1.gif',
+        2: 'images/cam2.jpg',
+        3: 'images/cam3.gif',
+        4: 'images/cam4.jpg'
+      };
+      document.getElementById('camera-feed').src = feeds[camNum];
+    }
+
+    // Make window draggable
+    const surveillanceHeader = document.querySelector('#surveillance-window > div:first-child');
+    const surveillanceWindow = document.getElementById('surveillance-window');
+
+    surveillanceHeader.addEventListener('mousedown', (e) => {
+      isDragging = true;
+      offsetX = e.clientX - surveillanceWindow.getBoundingClientRect().left;
+      offsetY = e.clientY - surveillanceWindow.getBoundingClientRect().top;
+      surveillanceWindow.style.cursor = 'grabbing';
+    });
+
+    document.addEventListener('mousemove', (e) => {
+      if (isDragging) {
+        let newLeft = e.clientX - offsetX;
+        let newTop = e.clientY - offsetY;
+        
+        const rect = surveillanceWindow.getBoundingClientRect();
+        const maxLeft = window.innerWidth - rect.width;
+        const maxTop = window.innerHeight - rect.height;
+        
+        newLeft = Math.max(0, Math.min(newLeft, maxLeft));
+        newTop = Math.max(0, Math.min(newTop, maxTop));
+        
+        surveillanceWindow.style.left = newLeft + 'px';
+        surveillanceWindow.style.top = newTop + 'px';
+      }
+    });
+
+    document.addEventListener('mouseup', () => {
+      isDragging = false;
+      surveillanceWindow.style.cursor = 'move';
+    });
+
+    document.addEventListener('DOMContentLoaded', () => {
+      startLoadingSequence();
+    });
+
+    function startLoadingSequence() {
+      const loadingScreen = document.getElementById('loading-screen');
+      const loadingProgress = document.getElementById('loading-progress');
+      const loadingStatus = document.getElementById('loading-status');
+
+      document.getElementById('loading-sound').currentTime = 0;
+      document.getElementById('loading-sound').volume = 0.3;
+      document.getElementById('loading-sound').play();
+
+      const messages = [
+        "Verifying Raven credentials...",
+        "Granting Bravo clearance...",
+        "Loading classified modules...",
+        "Accessing secure channels...",
+        "Establishing encrypted connection...",
+        "Welcome Bravo Unit 'Raven'"
+      ];
+
+      let progress = 0;
+      const interval = setInterval(() => {
+        progress += Math.random() * 15;
+        if (progress >= 100) {
+          progress = 100;
+          clearInterval(interval);
+          loadingStatus.textContent = "PERMS FOUND! WELCOME BRAVO UNIT 'RAVEN'";
+          setTimeout(() => {
+            loadingScreen.style.opacity = '0';
+            loadingScreen.style.transition = 'opacity 0.5s';
+            setTimeout(() => {
+              loadingScreen.remove();
+              document.getElementById('desktop').classList.remove('hidden');
+              document.getElementById('hum-sound').volume = 0.1;
+              document.getElementById('hum-sound').play();
+            }, 500);
+          }, 1000);
+        }
+        loadingProgress.style.width = `${progress}%`;
+        if (progress % 20 < 1) {
+          const idx = Math.min(Math.floor(progress / 20), messages.length - 1);
+          loadingStatus.textContent = messages[idx];
+        }
+      }, 250);
+
+      updateClock();
+      setInterval(updateClock, 1000);
+      feather.replace();
+    }
+
+    function updateClock() {
+      document.getElementById('clock').textContent = new Date().toLocaleTimeString();
+    }
+
+    function launchTerminal() {
+      document.getElementById('terminal-window').classList.remove('hidden');
+      document.getElementById('terminal-sound').currentTime = 0;
+      document.getElementById('terminal-sound').volume = 0.2;
+      document.getElementById('terminal-sound').play();
+      document.getElementById('static-sound').currentTime = 0;
+      document.getElementById('static-sound').volume = 0.3;
+      document.getElementById('static-sound').play();
+    }
+    
+    function closeTerminal() {
+      const terminal = document.getElementById('terminal-window');
+      document.getElementById('static-sound').pause();
+      document.getElementById('static-sound').currentTime = 0;
+      terminal.classList.add('window-close-anim');
+      setTimeout(() => {
+        terminal.classList.add('hidden');
+        terminal.classList.remove('window-close-anim');
+        document.getElementById('terminal-sound').pause();
+        document.getElementById('terminal-sound').currentTime = 0;
+      }, 250);
+    }
+  </script>
+</body>
+</html>
 
