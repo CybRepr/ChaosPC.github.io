@@ -225,8 +225,26 @@
 <body class="grid-bg h-screen overflow-hidden">
     <div class="crt-effect"></div>
     
+    <!-- Terms Agreement Screen -->
+    <div id="terms-screen" class="fixed inset-0 bg-black bg-opacity-90 z-[100] flex items-center justify-center">
+        <div class="bg-black border-2 border-red-500 p-6 rounded-md max-w-md w-full">
+            <h2 class="text-red-500 text-2xl mb-4 text-center">WARNING</h2>
+            <p class="text-green-500 mb-6">
+                This Site is for Zenith Project Roleplay Purposes. Do not use this website to metagame or to cause Havoc.
+            </p>
+            <div class="flex justify-center gap-4">
+                <button id="accept-terms" class="bg-green-900 hover:bg-green-800 text-green-500 py-2 px-4 border border-green-500">
+                    I ACCEPT
+                </button>
+                <button id="decline-terms" class="bg-red-900 hover:bg-red-800 text-red-500 py-2 px-4 border border-red-500">
+                    I DISAGREE
+                </button>
+            </div>
+        </div>
+    </div>
+
     <!-- Boot Screen -->
-    <div id="boot-screen" class="fixed inset-0 bg-black z-50 flex items-center justify-center">
+    <div id="boot-screen" class="hidden fixed inset-0 bg-black z-50 flex items-center justify-center">
         <div class="text-center">
             <div class="mb-4">
                 <img src="https://upload.wikimedia.org/wikipedia/commons/b/bf/Chaos_Insurgency_logo.png" 
@@ -722,9 +740,52 @@
             });
         }
         
-        // Boot sequence
+        // Terms agreement
         document.addEventListener('DOMContentLoaded', function() {
+            // Terms agreement functionality
+            const acceptBtn = document.getElementById('accept-terms');
+            const declineBtn = document.getElementById('decline-terms');
+            
+            acceptBtn.addEventListener('click', function() {
+                document.getElementById('click-sound').currentTime = 0;
+                document.getElementById('click-sound').volume = 0.3;
+                document.getElementById('click-sound').play();
+                
+                // Fade out terms screen
+                document.getElementById('terms-screen').style.animation = 'fadeOut 0.3s forwards';
+                
+                setTimeout(() => {
+                    document.getElementById('terms-screen').classList.add('hidden');
+                    
+                    // Show boot screen
+                    document.getElementById('boot-screen').classList.remove('hidden');
+                    
+                    // Play loading sound
+                    document.getElementById('loading-sound').currentTime = 0;
+                    document.getElementById('loading-sound').volume = 0.3;
+                    document.getElementById('loading-sound').play();
+                    
+                    // Start boot sequence
+                    startBootSequence();
+                }, 300);
+            });
+
+            declineBtn.addEventListener('click', function() {
+                document.getElementById('click-sound').currentTime = 0;
+                document.getElementById('click-sound').volume = 0.3;
+                document.getElementById('click-sound').play();
+                
+                document.getElementById('terms-screen').style.animation = 'fadeOut 0.3s forwards';
+                setTimeout(() => {
+                    window.location.href = 'https://www.google.com';
+                }, 300);
+            });
+        });
+
+        function startBootSequence() {
             const bootScreen = document.getElementById('boot-screen');
+            const loginScreen = document.getElementById('login-screen');
+            bootScreen.classList.remove('hidden');
             const bootProgress = document.getElementById('boot-progress');
             const bootStatus = document.getElementById('boot-status');
             
@@ -756,14 +817,14 @@
                             bootScreen.remove();
                             // Show login screen
                             loginScreen.classList.remove('hidden');
+                            // Play boot sound when login screen appears
+                            document.getElementById('boot-sound').currentTime = 0;
+                            document.getElementById('boot-sound').volume = 0.3;
+                            document.getElementById('boot-sound').play();
                             // Start ambient sounds
                             document.getElementById('hum-sound').currentTime = 0;
                             document.getElementById('hum-sound').volume = 0.1;
                             document.getElementById('hum-sound').play();
-                            // Play boot complete sound
-                            document.getElementById('boot-sound').currentTime = 0;
-                            document.getElementById('boot-sound').volume = 0.3;
-                            document.getElementById('boot-sound').play();
                         }, 500);
                     }, 1000);
                 }
@@ -786,7 +847,7 @@
                     document.getElementById('login-screen').style.opacity = 0.9 + Math.random() * 0.2;
                 }
             }, 100);
-        });
+        }
         
         function updateClock() {
             const now = new Date();
