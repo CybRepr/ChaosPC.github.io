@@ -366,23 +366,24 @@
         </div>
     </div>
     
-    <!-- Sound Effects -->
-    <audio id="boot-sound" src="https://assets.mixkit.co/sfx/preview/mixkit-computer-start-up-1687.mp3" preload="auto"></audio>
-    <audio id="click-sound" src="https://assets.mixkit.co/sfx/preview/mixkit-modern-click-box-check-1120.mp3" preload="auto"></audio>
-    <audio id="login-sound" src="https://assets.mixkit.co/sfx/preview/mixkit-security-lock-system-beep-902.mp3" preload="auto"></audio>
-    <audio id="error-sound" src="https://assets.mixkit.co/sfx/preview/mixkit-alarm-digital-clock-beep-989.mp3" preload="auto"></audio>
-    <audio id="terminal-sound" src="https://assets.mixkit.co/sfx/preview/mixkit-computer-terminal-confirmation-2528.mp3" preload="auto" loop></audio>
-    <audio id="window-open" src="https://assets.mixkit.co/sfx/preview/mixkit-computer-system-fail-1994.mp3" preload="auto"></audio>
-    <audio id="window-close" src="https://assets.mixkit.co/sfx/preview/mixkit-computer-reboot-1093.mp3" preload="auto"></audio>
-    <audio id="glitch-sound" src="https://assets.mixkit.co/sfx/preview/mixkit-computer-glitch-2529.mp3" preload="auto"></audio>
-    <audio id="typing-sound" src="https://assets.mixkit.co/sfx/preview/mixkit-keyboard-typing-1386.mp3" preload="auto"></audio>
-    <audio id="static-sound" src="https://assets.mixkit.co/sfx/preview/mixkit-radio-static-1680.mp3" preload="auto"></audio>
-    <audio id="hum-sound" src="https://assets.mixkit.co/sfx/preview/mixkit-computer-hum-1684.mp3" preload="auto" loop></audio>
-    <audio id="keypress-sound" src="https://assets.mixkit.co/sfx/preview/mixkit-modern-click-tech-1109.mp3" preload="auto"></audio>
-    <audio id="lock-sound" src="https://assets.mixkit.co/sfx/preview/mixkit-lock-digital-code-lock-1222.mp3" preload="auto"></audio>
-    <audio id="loading-sound" src="https://assets.mixkit.co/sfx/preview/mixkit-computer-processing-sci-fi-alert-2590.mp3" preload="auto"></audio>
-    <audio id="cam-switch" src="https://assets.mixkit.co/sfx/preview/mixkit-retro-arcade-game-interface-2575.mp3" preload="auto"></audio>
-    
+<!-- Sound Effects (served from /AUDIO on GitHub Pages) -->
+<audio id="boot-sound"      src="AUDIO/boot.mp3"            preload="auto"></audio>
+<audio id="click-sound"     src="AUDIO/click.mp3"           preload="auto"></audio>
+<audio id="login-sound"     src="AUDIO/login.mp3"           preload="auto"></audio>
+<audio id="error-sound"     src="AUDIO/error.mp3"           preload="auto"></audio>
+<audio id="terminal-sound"  src="AUDIO/terminal-loop.mp3"   preload="auto" loop></audio>
+<audio id="window-open"     src="AUDIO/window-open.mp3"     preload="auto"></audio>
+<audio id="window-close"    src="AUDIO/window-close.mp3"    preload="auto"></audio>
+<audio id="glitch-sound"    src="AUDIO/glitch.mp3"          preload="auto"></audio>
+<audio id="typing-sound"    src="AUDIO/typing.mp3"          preload="auto"></audio>
+<audio id="static-sound"    src="AUDIO/static.mp3"          preload="auto"></audio>
+<audio id="hum-sound"       src="AUDIO/ambience-hum.mp3"    preload="auto" loop></audio>
+<audio id="keypress-sound"  src="AUDIO/keypress.mp3"        preload="auto"></audio>
+<audio id="lock-sound"      src="AUDIO/lock.mp3"            preload="auto"></audio>
+<audio id="loading-sound"   src="AUDIO/loading.mp3"         preload="auto"></audio>
+<audio id="cam-switch"      src="AUDIO/cam-switch.mp3"      preload="auto"></audio>
+
+
     <script>
         // Launch functions for new shortcuts
         // Surveillance Window
@@ -457,7 +458,11 @@
         });
         
         function launchSurveillance() {
+            document.getElementById('click-sound').currentTime = 0;
+            document.getElementById('click-sound').volume = 0.3;
             document.getElementById('click-sound').play();
+            document.getElementById('window-open').currentTime = 0;
+            document.getElementById('window-open').volume = 0.3;
             document.getElementById('window-open').play();
             surveillanceWindow.classList.remove('hidden');
             surveillanceWindow.classList.add('window');
@@ -465,7 +470,11 @@
         }
         
         function closeSurveillance() {
+            document.getElementById('click-sound').currentTime = 0;
+            document.getElementById('click-sound').volume = 0.3;
             document.getElementById('click-sound').play();
+            document.getElementById('window-close').currentTime = 0;
+            document.getElementById('window-close').volume = 0.3;
             document.getElementById('window-close').play();
             surveillanceWindow.classList.add('window-close-anim');
             setTimeout(() => {
@@ -477,6 +486,7 @@
         
         function switchCamera(camNum) {
             document.getElementById('cam-switch').currentTime = 0;
+            document.getElementById('cam-switch').volume = 0.3;
             document.getElementById('cam-switch').play();
             currentFeed = camNum;
             const feeds = {
@@ -697,7 +707,11 @@
         
         // Play ambient sounds
         document.addEventListener('DOMContentLoaded', function() {
+            document.getElementById('boot-sound').currentTime = 0;
+            document.getElementById('boot-sound').volume = 0.5;
             document.getElementById('boot-sound').play();
+            document.getElementById('hum-sound').currentTime = 0;
+            document.getElementById('hum-sound').volume = 0.1;
             document.getElementById('hum-sound').play();
             updateClock();
             setInterval(updateClock, 1000);
@@ -722,9 +736,13 @@
             const password = document.getElementById('password').value;
             const clickSound = document.getElementById('click-sound');
             clickSound.currentTime = 0;
+            clickSound.volume = 0.3;
             clickSound.play();
             
             if (password === 'password') {
+                document.getElementById('loading-sound').currentTime = 0;
+                document.getElementById('loading-sound').volume = 0.3;
+                document.getElementById('loading-sound').play();
                 setTimeout(function() {
                     document.getElementById('loading-sound').play();
                     // Start login animation
@@ -783,7 +801,11 @@
         // Terminal functions
         function launchTerminal() {
             document.getElementById('terminal-window').classList.remove('hidden');
+            document.getElementById('terminal-sound').currentTime = 0;
+            document.getElementById('terminal-sound').volume = 0.2;
             document.getElementById('terminal-sound').play();
+            document.getElementById('static-sound').currentTime = 0;
+            document.getElementById('static-sound').volume = 0.3;
             document.getElementById('static-sound').play();
         }
         
@@ -836,6 +858,7 @@
         document.getElementById('command-input').addEventListener('keydown', function(e) {
             if (e.key !== 'Enter') {
                 document.getElementById('typing-sound').currentTime = 0;
+                document.getElementById('typing-sound').volume = 0.2;
                 document.getElementById('typing-sound').play();
             }
             if (e.key === 'Enter') {
