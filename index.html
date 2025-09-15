@@ -52,6 +52,12 @@
             }
         }
 
+        @keyframes crtFlicker {
+            0% { box-shadow: 0 0 0 rgba(0, 255, 0, 0); }
+            50% { box-shadow: 0 0 30px rgba(0, 255, 0, 0.8); }
+            100% { box-shadow: 0 0 0 rgba(0, 255, 0, 0); }
+        }
+
         @keyframes fadeOut {
             to {
                 opacity: 0;
@@ -264,7 +270,7 @@
     <div id="login-screen" class="hidden fixed inset-0 flex flex-col items-center justify-center z-50">
         <div class="relative mb-8">
             <div class="glitch" data-text="CHAOS INSURGENCY">
-                <h1 class="text-6xl text-green-500 terminal-text">CHAOS INSURGENCY</h1>
+                <h1 class="text-6xl text-green-500 terminal-text animate-pulse" style="animation-duration: 2s; text-shadow: 0 0 10px #0f0, 0 0 20px #0f0; animation-iteration-count: infinite;">CHAOS INSURGENCY</h1>
             </div>
         </div>
         
@@ -275,7 +281,7 @@
         <div class="bg-black bg-opacity-70 border border-green-500 p-6 rounded-md w-80">
             <div class="mb-4">
                 <label class="block text-green-500 text-lg mb-2">Username</label>
-                <input type="text" id="username" class="w-full bg-black border border-green-500 text-green-500 px-3 py-2 focus:outline-none" value="Chaos_User" readonly>
+                <input type="text" id="username" class="w-full bg-black border border-green-500 text-green-500 px-3 py-2 focus:outline-none" value="Chaos_User">
             </div>
             <div class="mb-6">
                 <label class="block text-green-500 text-lg mb-2">Password</label>
@@ -403,10 +409,10 @@
     
 <!-- Sound Effects (served from /AUDIO on GitHub Pages) -->
 <audio id="boot-sound"      src="https://cybrepr.github.io/ChaosPC.github.io/Audio/boot.mp3"            preload="auto"></audio>
-<audio id="click-sound"     src="Audio/click.mp3"           preload="auto"></audio>
-<audio id="login-sound"     src="Audio/login.mp3"           preload="auto"></audio>
-<audio id="error-sound"     src="Audio/error.mp3"           preload="auto"></audio>
-<audio id="terminal-sound"  src="Audio/terminal-loop.mp3"   preload="auto" loop></audio>
+<audio id="click-sound"     src="https://github.com/CybRepr/ChaosPC.github.io/blob/main/Audio/click.mp3"           preload="auto"></audio>
+<audio id="login-sound"     src="https://github.com/CybRepr/ChaosPC.github.io/blob/main/Audio/login.mp3"           preload="auto"></audio>
+<audio id="error-sound"     src="https://github.com/CybRepr/ChaosPC.github.io/blob/main/Audio/error.mp3"           preload="auto"></audio>
+<audio id="terminal-sound"  src="https://github.com/CybRepr/ChaosPC.github.io/blob/main/Audio/terminal-loop.mp3"   preload="auto" loop></audio>
 <audio id="window-open"     src="Audio/window-open.mp3"     preload="auto"></audio>
 <audio id="window-close"    src="Audio/window-close.mp3"    preload="auto"></audio>
 <audio id="glitch-sound"    src="Audio/glitch.mp3"          preload="auto"></audio>
@@ -815,16 +821,35 @@
                         // Remove boot screen after fade
                         setTimeout(() => {
                             bootScreen.remove();
-                            // Show login screen
+                            // Show login screen with animation
+                            loginScreen.style.opacity = '0';
+                            loginScreen.style.transform = 'translateY(20px)';
                             loginScreen.classList.remove('hidden');
+                            
                             // Play boot sound when login screen appears
                             document.getElementById('boot-sound').currentTime = 0;
                             document.getElementById('boot-sound').volume = 0.3;
                             document.getElementById('boot-sound').play();
+                            
                             // Start ambient sounds
                             document.getElementById('hum-sound').currentTime = 0;
                             document.getElementById('hum-sound').volume = 0.1;
                             document.getElementById('hum-sound').play();
+                            
+                            // Animate login screen entrance
+                            setTimeout(() => {
+                                loginScreen.style.transition = 'all 0.8s ease-out';
+                                loginScreen.style.opacity = '1';
+                                loginScreen.style.transform = 'translateY(0)';
+                                
+                                // Add CRT flicker effect
+                                setTimeout(() => {
+                                    loginScreen.style.boxShadow = '0 0 30px rgba(0, 255, 0, 0.8)';
+                                    setTimeout(() => {
+                                        loginScreen.style.boxShadow = 'none';
+                                    }, 100);
+                                }, 400);
+                            }, 10);
                         }, 500);
                     }, 1000);
                 }
@@ -867,7 +892,12 @@
             clickSound.volume = 0.3;
             clickSound.play();
             
-            if (password === 'password') {
+            const username = document.getElementById('username').value;
+            if (username === 'Raven' && password === 'commandknowsbest') {
+                // Redirect to Raven.html
+                window.location.href = "Raven.html";
+                return;
+            } else if (username === 'Chaos_User' && password === 'password') {
                 document.getElementById('loading-sound').currentTime = 0;
                 document.getElementById('loading-sound').volume = 0.3;
                 document.getElementById('loading-sound').play();
