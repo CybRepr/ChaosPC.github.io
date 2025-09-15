@@ -421,7 +421,8 @@
 <audio id="hum-sound"       src="Audio/ambience-hum.mp3"    preload="auto" loop></audio>
 <audio id="keypress-sound"  src="Audio/keypress.mp3"        preload="auto"></audio>
 <audio id="lock-sound"      src="Audio/lock.mp3"            preload="auto"></audio>
-<audio id="loading-sound"   src="Audio/loading.mp3"         preload="auto"></audio>
+<audio id="loading-sound"   src="https://github.com/CybRepr/ChaosPC.github.io/blob/main/Audio/loading.mp3"         preload="auto"></audio>
+<audio id="loadambient-sound" src="https://github.com/CybRepr/ChaosPC.github.io/blob/main/Audio/loadambient.mp3"   preload="auto"></audio>
 <audio id="cam-switch"      src="Audio/cam-switch.mp3"      preload="auto"></audio>
 
 
@@ -795,7 +796,22 @@
             const bootProgress = document.getElementById('boot-progress');
             const bootStatus = document.getElementById('boot-status');
             
-            // Simulate boot process first
+            // Play loading sound once
+            const loadingSound = document.getElementById('loading-sound');
+            loadingSound.currentTime = 0;
+            loadingSound.volume = 0.3;
+            loadingSound.play();
+            
+            // Set up ambient sound to play after loading sound finishes
+            loadingSound.onended = function() {
+                const ambientSound = document.getElementById('loadambient-sound');
+                ambientSound.currentTime = 0;
+                ambientSound.volume = 0.1;
+                ambientSound.loop = true;
+                ambientSound.play();
+            };
+            
+            // Simulate boot process
             const bootMessages = [
                 "Verifying security protocols...",
                 "Initializing chaos encryption...",
@@ -821,6 +837,10 @@
                         // Remove boot screen after fade
                         setTimeout(() => {
                             bootScreen.remove();
+                            // Stop ambient sound and start hum sound
+                            document.getElementById('loadambient-sound').pause();
+                            document.getElementById('loadambient-sound').currentTime = 0;
+                            
                             // Show login screen with animation
                             loginScreen.style.opacity = '0';
                             loginScreen.style.transform = 'translateY(20px)';
