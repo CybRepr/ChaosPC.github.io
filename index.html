@@ -225,8 +225,25 @@
 <body class="grid-bg h-screen overflow-hidden">
     <div class="crt-effect"></div>
     
+    <!-- Boot Screen -->
+    <div id="boot-screen" class="fixed inset-0 bg-black z-50 flex items-center justify-center">
+        <div class="text-center">
+            <div class="mb-4">
+                <img src="https://upload.wikimedia.org/wikipedia/commons/b/bf/Chaos_Insurgency_logo.png" 
+                     alt="Chaos Insurgency Logo" 
+                     class="mx-auto w-32 h-32 animate-pulse">
+            </div>
+            <div class="text-green-500 text-xl mb-2">CHAOS INSURGENCY</div>
+            <div class="text-green-500 mb-8">SECURE BOOT SEQUENCE INITIATED</div>
+            <div class="w-64 h-1 bg-green-900 mx-auto overflow-hidden">
+                <div id="boot-progress" class="h-full bg-green-500" style="width: 0%"></div>
+            </div>
+            <div id="boot-status" class="text-green-500 text-sm mt-2">Verifying security protocols...</div>
+        </div>
+    </div>
+    
     <!-- Login Screen -->
-    <div id="login-screen" class="fixed inset-0 flex flex-col items-center justify-center z-50">
+    <div id="login-screen" class="hidden fixed inset-0 flex flex-col items-center justify-center z-50">
         <div class="relative mb-8">
             <div class="glitch" data-text="CHAOS INSURGENCY">
                 <h1 class="text-6xl text-green-500 terminal-text">CHAOS INSURGENCY</h1>
@@ -705,14 +722,60 @@
             });
         }
         
-        // Play ambient sounds
+        // Boot sequence
         document.addEventListener('DOMContentLoaded', function() {
-            document.getElementById('boot-sound').currentTime = 0;
-            document.getElementById('boot-sound').volume = 0.5;
-            document.getElementById('boot-sound').play();
-            document.getElementById('hum-sound').currentTime = 0;
-            document.getElementById('hum-sound').volume = 0.1;
-            document.getElementById('hum-sound').play();
+            const bootScreen = document.getElementById('boot-screen');
+            const bootProgress = document.getElementById('boot-progress');
+            const bootStatus = document.getElementById('boot-status');
+            
+            // Simulate boot process first
+            const bootMessages = [
+                "Verifying security protocols...",
+                "Initializing chaos encryption...",
+                "Loading insurgent modules...",
+                "Bypassing Foundation firewalls...",
+                "Establishing secure connection...",
+                "Finalizing initialization..."
+            ];
+            
+            let progress = 0;
+            const bootInterval = setInterval(() => {
+                progress += Math.random() * 15;
+                if (progress >= 100) {
+                    progress = 100;
+                    clearInterval(bootInterval);
+                    bootStatus.textContent = "Boot complete. Welcome, agent.";
+                    
+                    // Fade out boot screen
+                    setTimeout(() => {
+                        bootScreen.style.opacity = '0';
+                        bootScreen.style.transition = 'opacity 0.5s ease-out';
+                        
+                        // Remove boot screen after fade
+                        setTimeout(() => {
+                            bootScreen.remove();
+                            // Show login screen
+                            loginScreen.classList.remove('hidden');
+                            // Start ambient sounds
+                            document.getElementById('hum-sound').currentTime = 0;
+                            document.getElementById('hum-sound').volume = 0.1;
+                            document.getElementById('hum-sound').play();
+                            // Play boot complete sound
+                            document.getElementById('boot-sound').currentTime = 0;
+                            document.getElementById('boot-sound').volume = 0.3;
+                            document.getElementById('boot-sound').play();
+                        }, 500);
+                    }, 1000);
+                }
+                
+                bootProgress.style.width = `${progress}%`;
+                
+                // Update status message every 20% progress
+                if (progress % 20 < 1) {
+                    const msgIndex = Math.min(Math.floor(progress / 20), bootMessages.length - 1);
+                    bootStatus.textContent = bootMessages[msgIndex];
+                }
+            }, 300);
             updateClock();
             setInterval(updateClock, 1000);
             feather.replace();
@@ -731,6 +794,10 @@
             document.getElementById('clock').textContent = time;
         }
         
+        // Initialize login screen (hidden until boot completes)
+        const loginScreen = document.getElementById('login-screen');
+        loginScreen.classList.add('hidden');
+
         // Login functionality
         document.getElementById('login-btn').addEventListener('click', function() {
             const password = document.getElementById('password').value;
