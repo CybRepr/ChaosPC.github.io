@@ -1,17 +1,18 @@
-[SECURE INTEL ARCHIVE – CHAOS INSURGENCY]​
-Clearance Required: FOXTROT
-Access Scope: Read-Only (FOXTROT). Modification requires ECHO or higher.
-Unauthorized access will result in immediate termination.
+[SECURE INTEL ARCHIVE – CHAOS INSURGENCY]
 
-Authenticating ticket…
-…
-Welcome, Operative.
+Clearance Level: FOXTROT
+Access Scope: Read-Only (FOXTROT). Modification requires ECHO or higher.
+Notice: Unauthorized access will result in immediate termination.
+
+Authenticating ticket...
+...
+Access granted. Welcome, Operative.
 {C:/OPERATIVE/MUFFLIN_DOE}
 
-IMG_0820.png
-NOTICE: Personnel image file corrupted. Submit replacement at earliest convenience.
+------------------------------------------------------------
+PERSONNEL DOSSIER — FIELD INTEL RECORD
+------------------------------------------------------------
 
-PERSONNEL DOSSIER — FIELD INTEL RECORD​
 Alias / Callsign: MUFFLIN DOE
 True Name: UNKNOWN (Foundation-induced amnesia, Site-66)
 Rank: Lance Corporal (LCPL)
@@ -19,68 +20,114 @@ Branch / Section: Medical Division — Field Triage & Recovery
 Special Designation: Head of Torture Affairs (HTA)
 Status: ACTIVE DUTY
 
-Operative Statement (post-rescue):
-“The Foundation broke me and called it science. The Insurgency rebuilt me and called it purpose. I owe the Foundation nothing but pain—and I’ll carry the Insurgency’s banner until their halls are silent.”​
-BIOLOGICAL DATA​
-Sex: Male​
-Estimated Age: ~35 years​
-Stature: 5’9” — Lean build​
-Birthplace: Presumed United States (unverified)​
-Identifying Marks: Linear anterior neck scar (post-surgical; vocal reconstruction)​
-Medical Status: Fit for duty. Vocal cords surgically repaired post-extraction; speech now stable.​
-PSYCHOLOGICAL PROFILE​
-Baseline: Calm, disciplined, protocol-driven.​
-Foundation Confinement (Site-66): Presented acute psychosis under duress—delusions centered on a figure called “Greg” and “cannibal overlords.” High-pitched, unstable voice (pre-op) amplified derangement profile.​
-Post-Rescue Stabilization: Delusions suppressed; nightmares persist. Expresses shame regarding prior state; actively avoids triggers and remains mission-focused.​
-Disposition Toward Foundation: Fiery hatred, deeply personal.​
-Loyalty Index (CI): Absolute. Will not question CI command.​
-SERVICE HISTORY (TIMELINE)​
-Pre-Capture: Practicing physician (specialty unconfirmed; trauma/surgical indicators strong). Records fragmented.​
-Foundation Custody: Held at Site-66; subjected to experimentation and prolonged containment.​
-9/7/2025 — Extraction: Rescued during Chaos Insurgency raid on Site-66. Immediate intake to CI Medical Division.​
-9/11/2025— Medical Reconstruction: CI bio-surgical team repaired vocal cord damage; full operational clearance granted​
-9/12/2025 — Authorized Torture Operations: Conducted two sanctioned sessions on captured Foundation personnel. Observed by Bravo and Revenant teams. Subjects not terminated; returned alive, physically compromised and psychologically broken. Results recognized as high-value psychological warfare.​
-9/14/2025 — Commendation & Role Assignment: Awarded TORTURE MEDAL; appointed Head of Torture Affairs (HTA)..​
-DUTY ROLE — COMBAT & MEDICAL​
-Primary Function: Field Medic (Triage/Extraction/Stabilization).
-Adheres strictly to medical protocols; prioritizes pickup, stabilization, and stitching under fire.​
-Positions rear unless ordered forward; maintains comms discipline and SOP compliance.​
-Secondary Function: Head of Torture Affairs (HTA).
-Unknown​
-Note: File does not include procedural specifics. Methods are cataloged at ECHO and above.​
-WEAPONS & EQUIPMENT​
-Primary: Uzi Carbine (9×19mm) — configured for close-quarters defense of aid stations and casualty extractions.​
-Secondary: Service Pistol — standard CI sidearm for controlled engagements.​
-Tertiary / Personal: Karambit — close-in blade; subject displays marked proficiency and distinct preference in confined spaces.​
-Medical Loadout: Field trauma kit, hemostatics, suture sets, airway adjuncts, compact diagnostics.​
-HTA Kit (in assembly): Sanitizable restraints, inspection lighting, precision instruments, steel mallet, rubber mallet, medial grade bone drill, tetrodotoxin, Special IV Mixture, pack of 25 scalpels, blowtorch, and Stitching kit.​
-Personal Effect: Ornate wooden box containing the scalpel used in first torture session (retained as symbolic artifact; blood residue present).​
-TORTURE DOCTRINE (HTA SUMMARY — FOXTROT VIEW)​
-Operational overview only. No procedural detail below this clearance.​
-Modality: Clinical, controlled, and medical-precision oriented; emphasizes survivability and long-term psychological impact over lethality.​
-Known Signatures:
-Glossal mutilation (tongue removal) under sanctioned parameters.​
-Power-tool intimidation & targeted trauma (“drill work”) executed with strict containment of fatal risk.​
-Record: Exactly two sanctioned sessions to date; both overseen by Bravo and Revenant command elements; outcomes logged as mission-enhancing and morale-degrading for the opposing force.​
-RELATIONSHIP WITH COMMAND & UNIT​
-Command Stance: Formal relationship unpublished at this clearance. Bravo and higher leadership praised Torture work.​
-Obedience Profile: Unquestioning toward CI command; will never doubt CI.​
-Intra-Cell Conduct: Respectful, medically attentive; performs proactive health status checks on personnel. Self-identifies as “another hand of the Insurgency,” not a hero figure.​
-ATTITUDE REGISTER (SELF-REPORTED)​
-< HATES > Foundation — for imprisonment, experimentation, and attempted erasure of identity.​
-< DISLIKES > Unsanitary instruments/environments.​
-< LIKES > The Chaos Insurgency — loyalty forged in rescue and restoration.​
-< LOVES > Advancing medical capability; applying knowledge to save our own and break the enemy’s will.​
-(Administrative Note: The above reflects subject’s personal views; treated as OOC insight for roleplay environments. Not actionable IC evidence.)​
-RISK & MONITORING​
-Psych Residuals: Nightmares consistent with prior captivity; patient reports shame regarding delusional period.​
-Trigger Controls: Avoid exposure to [REDACTED COMPOUND] and sensory profiles linked to Site-66 conditioning.​
-Oversight: Continue routine psych evals and medical readiness checks. No current indications of disobedience or mission-risk impulsivity.​
-COMMAND REMARKS (EXCERPT — FOXTROT)​
-N/A​
-FILE FOOTERS​
-File Owner: CI Medical Division / Cell Command​
-Last Update: 09/15/2025​
-Next Review: 10/20/2025​
-Amendments: Submit ECHO+ change requests via secure channel.​
-END OF FILE
+------------------------------------------------------------
+OPERATIVE STATEMENT (POST-RESCUE)
+------------------------------------------------------------
+“The Foundation broke me and called it science.  
+The Insurgency rebuilt me and called it purpose.  
+I owe the Foundation nothing but pain—and I’ll carry the Insurgency’s banner until their halls are silent.”
+
+------------------------------------------------------------
+BIOLOGICAL DATA
+------------------------------------------------------------
+Sex: Male  
+Estimated Age: ~35 years  
+Stature: 5’9” — Lean build  
+Birthplace: Presumed United States (unverified)  
+Identifying Marks: Linear anterior neck scar (post-surgical; vocal reconstruction)  
+Medical Status: Fit for duty. Vocal cords surgically repaired; speech stable.  
+
+------------------------------------------------------------
+PSYCHOLOGICAL PROFILE
+------------------------------------------------------------
+Baseline: Calm, disciplined, protocol-driven.  
+Confinement at Site-66: Exhibited acute psychosis under duress.  
+  - Delusions centered on “Greg” and “cannibal overlords.”  
+  - High-pitched, unstable voice (pre-op) amplified instability.  
+
+Post-Rescue Stabilization:  
+  - Delusions suppressed, nightmares persist.  
+  - Displays shame regarding prior state; avoids known triggers.  
+  - Mission focus: High.  
+
+Disposition Toward Foundation: Extreme personal hatred.  
+Loyalty Index (CI): Absolute — will not question command.  
+
+------------------------------------------------------------
+SERVICE HISTORY (TIMELINE)
+------------------------------------------------------------
+Pre-Capture: Practicing physician (specialty unconfirmed; indicators suggest trauma/surgical). Records fragmented.  
+Foundation Custody: Held at Site-66, subjected to experimentation and containment.  
+
+09/07/2025 — Extraction: Rescued during CI raid on Site-66. Immediate transfer to Medical Division.  
+09/11/2025 — Medical Reconstruction: Vocal cord surgery successful. Cleared for active duty.  
+09/12/2025 — Torture Operations: Conducted two sanctioned sessions on Foundation personnel. Observed by Bravo and Revenant teams. Subjects survived but compromised. Recognized as effective psychological warfare.  
+09/14/2025 — Commendation: Awarded TORTURE MEDAL; formally appointed Head of Torture Affairs (HTA).  
+
+------------------------------------------------------------
+DUTY ROLE
+------------------------------------------------------------
+Primary Function: Field Medic (triage, extraction, stabilization).  
+  - Adheres to protocol; focuses on stabilization under fire.  
+  - Positions in rear unless ordered forward.  
+  - Maintains comms discipline.  
+
+Secondary Function: Head of Torture Affairs (HTA).  
+  - FOXTROT clearance: Overview only.  
+  - Procedural details restricted to ECHO+.  
+
+------------------------------------------------------------
+WEAPONS & EQUIPMENT
+------------------------------------------------------------
+Primary: Uzi Carbine (9×19mm) — close-quarters defense.  
+Secondary: Service Pistol — standard CI sidearm.  
+Tertiary: Karambit — favored blade for close combat.  
+
+Medical Loadout: Field trauma kit, hemostatics, sutures, airway adjuncts, compact diagnostics.  
+HTA Kit (in assembly): Restraints, inspection light, precision instruments, mallets, surgical drill, tetrodotoxin, special IV mixture, 25 scalpels, blowtorch, stitching kit.  
+Personal Effect: Ornate box containing scalpel used in first torture session (blood residue present).  
+
+------------------------------------------------------------
+TORTURE DOCTRINE (SUMMARY — FOXTROT VIEW)
+------------------------------------------------------------
+Approach: Clinical, controlled, medically precise.  
+Emphasis: Survivability and long-term psychological impact.  
+Signatures:  
+  - Glossal mutilation (tongue removal under sanctioned parameters).  
+  - “Drill work” intimidation and targeted trauma, strictly non-lethal.  
+
+Record: Two sanctioned sessions, overseen by Bravo and Revenant. Logged as effective psychological warfare.  
+
+------------------------------------------------------------
+RELATIONSHIPS & CONDUCT
+------------------------------------------------------------
+Command: Formal stance unpublished at FOXTROT level. Commended for torture effectiveness.  
+Obedience: Absolute. Will never doubt CI command.  
+Intra-Cell: Respectful, medically attentive. Proactive in maintaining unit health. Identifies as “another hand of the Insurgency,” not a hero.  
+
+------------------------------------------------------------
+ATTITUDE REGISTER (SELF-REPORTED)
+------------------------------------------------------------
+HATES — The Foundation (for imprisonment, experimentation, erasure attempts).  
+DISLIKES — Unsanitary instruments/environments.  
+LIKES — The Chaos Insurgency (loyalty forged in rescue).  
+LOVES — Advancing medical capability; saving CI personnel; breaking enemy will.  
+
+Note: Statements reflect subject’s self-reported views. Treated as roleplay insight, not actionable intelligence.  
+
+------------------------------------------------------------
+RISK & MONITORING
+------------------------------------------------------------
+Residual Effects: Nightmares linked to Site-66 confinement.  
+Trigger Avoidance: Must not be exposed to [REDACTED COMPOUND] or sensory triggers.  
+Oversight: Continue psych evaluations and medical readiness checks. No indicators of disobedience.  
+
+------------------------------------------------------------
+FILE FOOTERS
+------------------------------------------------------------
+File Owner: CI Medical Division / Cell Command  
+Last Update: 2025-09-15  
+Next Review: 2025-10-20  
+Amendments: ECHO+ required for modification requests.  
+
+>>> END OF FILE
