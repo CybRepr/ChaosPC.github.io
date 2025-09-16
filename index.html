@@ -335,11 +335,11 @@
             </div>
             
             <!-- Surveillance Control -->
-            <div class="icon group flex flex-col items-center cursor-pointer" onclick="launchSurveillance()">
+            <div class="icon group flex flex-col items-center cursor-pointer" onclick="launchCams()">
                 <div class="w-12 h-12 bg-green-900 border border-green-500 flex items-center justify-center mb-1 group-hover:bg-green-800 group-hover:border-green-300 transition-all duration-200">
                     <i data-feather="video" class="text-green-500 group-hover:text-green-300"></i>
                 </div>
-                <span class="text-green-500 text-center text-sm group-hover:text-green-300 group-hover:drop-shadow-[0_0_8px_rgba(0,255,0,0.8)] transition-all duration-200">Surveillance Control</span>
+                <span class="text-green-500 text-center text-sm group-hover:text-green-300 group-hover:drop-shadow-[0_0_8px_rgba(0,255,0,0.8)] transition-all duration-200">Security Camera System</span>
             </div>
             
             <!-- SELF DESTRUCT -->
@@ -366,12 +366,12 @@
                 <span class="text-green-500 text-center text-sm group-hover:text-green-300 group-hover:drop-shadow-[0_0_8px_rgba(0,255,0,0.8)] transition-all duration-200">Chaos Solitaire</span>
             </div>
             
-            <!-- Totally Not Malware -->
-            <div class="icon group flex flex-col items-center cursor-pointer" onclick="launchMalware()">
+            <!-- DO NOT OPEN! -->
+            <div class="icon group flex flex-col items-center cursor-pointer" onclick="launchVirus()">
                 <div class="w-12 h-12 bg-red-900 border border-red-500 flex items-center justify-center mb-1 group-hover:bg-red-800 group-hover:border-red-300 transition-all duration-200">
-                    <i data-feather="alert-triangle" class="text-red-500 group-hover:text-red-300"></i>
+                    <i data-feather="alert-octagon" class="text-red-500 group-hover:text-red-300"></i>
                 </div>
-                <span class="text-red-500 text-center text-sm group-hover:text-red-300 group-hover:drop-shadow-[0_0_8px_rgba(255,0,0,0.8)] transition-all duration-200">Totally_Not_Malware.exe</span>
+                <span class="text-red-500 text-center text-sm group-hover:text-red-300 group-hover:drop-shadow-[0_0_8px_rgba(255,0,0,0.8)] transition-all duration-200">DO NOT OPEN!</span>
             </div>
         </div>
     </div>
@@ -427,127 +427,185 @@
 <audio id="glitch-sound"    src="Audio/glitch.mp3"          preload="auto"></audio>
 <audio id="typing-sound"    src="Audio/typing.mp3"          preload="auto"></audio>
 <audio id="static-sound"    src="Audio/static.mp3"          preload="auto"></audio>
+<audio id="cam-switch"      src="Audio/cam-switch.mp3"      preload="auto"></audio>
+<audio id="cam-hum"         src="Audio/cam-hum.mp3"         preload="auto" loop></audio>
 <audio id="hum-sound"       src="Audio/ambience-hum.mp3"    preload="auto" loop></audio>
 <audio id="keypress-sound"  src="Audio/keypress.mp3"        preload="auto"></audio>
 <audio id="lock-sound"      src="Audio/lock.mp3"            preload="auto"></audio>
 <audio id="loading-sound"   src="https://raw.githubusercontent.com/CybRepr/ChaosPC.github.io/main/Audio/loading.mp3"         preload="auto"></audio>
 <audio id="loadambient-sound" src="https://raw.githubusercontent.com/CybRepr/ChaosPC.github.io/main/Audio/loadambient.mp3"   preload="auto"></audio>
 <audio id="cam-switch"      src="Audio/cam-switch.mp3"      preload="auto"></audio>
+<audio id="idiot-sound" src="https://raw.githubusercontent.com/CybRepr/ChaosPC.github.io/main/Audio/you-are-an-idiot.mp3" preload="auto"></audio>
+<audio id="cam-switch" src="Audio/cam-switch.mp3" preload="auto"></audio>
+<audio id="cam-hum"    src="Audio/cam-hum.mp3"    preload="auto" loop></audio>
 
 
     <script>
         // Launch functions for new shortcuts
-        // Surveillance Window
-        let currentFeed = 1;
-        const surveillanceWindow = document.createElement('div');
-        surveillanceWindow.className = 'hidden fixed bg-black border border-green-500 max-w-[90vw] max-h-[90vh] w-96 z-40 cursor-move';
-        surveillanceWindow.style.top = '50%';
-        surveillanceWindow.style.left = '50%';
-        surveillanceWindow.style.transform = 'translate(-50%, -50%)';
+        /* ===============================
+   FNaF-Style Camera System
+   =============================== */
+
+// Camera system configuration
+const CAMERA_SYSTEM = {
+  cameras: [
+    { id: 'CAM1', name: 'Main Entrance', src: 'images/cam1.jpg' },
+    { id: 'CAM2', name: 'Hallway A', src: 'images/cam2.jpg' },
+    { id: 'CAM3', name: 'Containment', src: 'images/cam3.jpg' },
+    { id: 'CAM4', name: 'Storage', src: 'images/cam4.jpg' }
+  ],
+  staticImage: 'images/static.gif',
+  switchSound: 'cam-switch',
+  humSound: 'cam-hum'
+};
+
+let cameraWindow = null;
+let activeCamera = null;
+
+function launchCams() {
+  if (!cameraWindow) {
+    cameraWindow = createCameraWindow();
+    document.body.appendChild(cameraWindow);
+    feather.replace();
+    
+    // Initialize camera list
+    const cameraList = cameraWindow.querySelector('#camera-list');
+    CAMERA_SYSTEM.cameras.forEach((cam, index) => {
+      const btn = document.createElement('button');
+      btn.className = 'w-full p-2 text-left border border-green-700 hover:bg-green-900 text-green-400';
+      btn.innerHTML = `
+        <span class="font-mono">${cam.id}</span>
+        <span class="text-xs opacity-80 block">${cam.name}</span>
+      `;
+      btn.addEventListener('click', () => switchCamera(cam.id));
+      cameraList.appendChild(btn);
+      
+      // Set first camera as default
+      if (index === 0) {
+        btn.classList.add('bg-green-900');
+        activeCamera = cam.id;
+        switchCamera(cam.id);
+      }
+    });
+
+    // Make window draggable
+    const header = cameraWindow.querySelector('.drag-handle');
+    makeDraggable(cameraWindow, header);
+  }
+  
+  cameraWindow.classList.remove('hidden');
+  playSound(CAMERA_SYSTEM.humSound, true);
+  bringToFront(cameraWindow);
+}
+
+function closeCams() {
+  if (!cameraWindow) return;
+  playSound(CAMERA_SYSTEM.humSound, false);
+  cameraWindow.classList.add('hidden');
+}
+
+function createCameraWindow() {
+  const win = document.createElement('div');
+  win.className = 'fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-4/5 h-4/5 bg-black border border-green-500 z-50 window';
+  win.style.maxWidth = '900px';
+  win.style.maxHeight = '600px';
+  
+  win.innerHTML = `
+    <div class="h-full flex flex-col">
+      <!-- Header -->
+      <div class="bg-green-900 border-b border-green-500 p-2 flex justify-between items-center drag-handle">
+        <span class="text-green-500">Security Camera System</span>
+        <button onclick="closeCams()" class="text-red-500 hover:text-red-300">
+          <i data-feather="x" class="w-5 h-5"></i>
+        </button>
+      </div>
+      
+      <!-- Content -->
+      <div class="flex flex-1 overflow-hidden">
+        <!-- Camera List -->
+        <div class="w-1/4 border-r border-green-500 p-2 overflow-y-auto">
+          <div class="text-green-400 text-xs mb-2">CAMERA FEEDS</div>
+          <div id="camera-list" class="space-y-2"></div>
+        </div>
         
-        const surveillanceHeader = document.createElement('div');
-        surveillanceHeader.className = 'bg-green-900 text-green-500 p-2 flex justify-between items-center';
-        surveillanceHeader.innerHTML = `
-            <span>Surveillance Control</span>
-            <button onclick="closeSurveillance()" class="text-red-500 window-close">
-                <i data-feather="x" class="w-4 h-4"></i>
-            </button>
-        `;
-        
-        const videoFeed = document.createElement('div');
-        videoFeed.className = 'h-64 bg-black border-b border-green-500 flex items-center justify-center';
-        videoFeed.innerHTML = `
-            <img id="camera-feed" src="images/cam1.gif" class="h-full w-full object-contain" alt="Camera Feed">
-        `;
-        
-        const cameraControls = document.createElement('div');
-        cameraControls.className = 'p-2 flex justify-around';
-        cameraControls.innerHTML = `
-            <button onclick="switchCamera(1)" class="bg-green-900 hover:bg-green-800 text-green-500 px-3 py-1 border border-green-500">CAM1</button>
-            <button onclick="switchCamera(2)" class="bg-green-900 hover:bg-green-800 text-green-500 px-3 py-1 border border-green-500">CAM2</button>
-            <button onclick="switchCamera(3)" class="bg-green-900 hover:bg-green-800 text-green-500 px-3 py-1 border border-green-500">CAM3</button>
-            <button onclick="switchCamera(4)" class="bg-green-900 hover:bg-green-800 text-green-500 px-3 py-1 border border-green-500">CAM4</button>
-        `;
-        
-        surveillanceWindow.appendChild(surveillanceHeader);
-        surveillanceWindow.appendChild(videoFeed);
-        surveillanceWindow.appendChild(cameraControls);
-        document.body.appendChild(surveillanceWindow);
-        
-        // Make window draggable
-        let isDragging = false;
-        let offsetX, offsetY;
-        
-        surveillanceHeader.addEventListener('mousedown', (e) => {
-            isDragging = true;
-            offsetX = e.clientX - surveillanceWindow.getBoundingClientRect().left;
-            offsetY = e.clientY - surveillanceWindow.getBoundingClientRect().top;
-            surveillanceWindow.style.cursor = 'grabbing';
-        });
-        
-        document.addEventListener('mousemove', (e) => {
-            if (isDragging) {
-                let newLeft = e.clientX - offsetX;
-                let newTop = e.clientY - offsetY;
-                
-                // Keep window within viewport bounds
-                const rect = surveillanceWindow.getBoundingClientRect();
-                const maxLeft = window.innerWidth - rect.width;
-                const maxTop = window.innerHeight - rect.height;
-                
-                newLeft = Math.max(0, Math.min(newLeft, maxLeft));
-                newTop = Math.max(0, Math.min(newTop, maxTop));
-                
-                surveillanceWindow.style.left = newLeft + 'px';
-                surveillanceWindow.style.top = newTop + 'px';
-            }
-        });
-        
-        document.addEventListener('mouseup', () => {
-            isDragging = false;
-            surveillanceWindow.style.cursor = 'move';
-        });
-        
-        function launchSurveillance() {
-            document.getElementById('click-sound').currentTime = 0;
-            document.getElementById('click-sound').volume = 0.3;
-            document.getElementById('click-sound').play();
-            document.getElementById('window-open').currentTime = 0;
-            document.getElementById('window-open').volume = 0.3;
-            document.getElementById('window-open').play();
-            surveillanceWindow.classList.remove('hidden');
-            surveillanceWindow.classList.add('window');
-            feather.replace();
-        }
-        
-        function closeSurveillance() {
-            document.getElementById('click-sound').currentTime = 0;
-            document.getElementById('click-sound').volume = 0.3;
-            document.getElementById('click-sound').play();
-            document.getElementById('window-close').currentTime = 0;
-            document.getElementById('window-close').volume = 0.3;
-            document.getElementById('window-close').play();
-            surveillanceWindow.classList.add('window-close-anim');
-            setTimeout(() => {
-                surveillanceWindow.classList.add('hidden');
-                surveillanceWindow.classList.remove('window-close-anim');
-                surveillanceWindow.classList.remove('window');
-            }, 250);
-        }
-        
-        function switchCamera(camNum) {
-            document.getElementById('cam-switch').currentTime = 0;
-            document.getElementById('cam-switch').volume = 0.3;
-            document.getElementById('cam-switch').play();
-            currentFeed = camNum;
-            const feeds = {
-                1: 'images/cam1.gif',
-                2: 'images/cam2.jpg', 
-                3: 'images/cam3.gif',
-                4: 'images/cam4.jpg'
-            };
-            document.getElementById('camera-feed').src = feeds[camNum];
-        }
+        <!-- Camera Feed -->
+        <div class="flex-1 relative bg-black">
+          <img id="camera-feed" class="w-full h-full object-contain" src="" alt="Camera Feed">
+          
+          <!-- Static overlay -->
+          <div id="static-overlay" class="absolute inset-0 bg-cover bg-center opacity-0 pointer-events-none transition-opacity duration-100" 
+               style="background-image: url('${CAMERA_SYSTEM.staticImage}')"></div>
+               
+          <!-- HUD -->
+          <div class="absolute top-2 left-2 bg-black bg-opacity-70 border border-green-500 text-green-400 px-2 py-1 text-xs">
+            CAM <span id="active-camera-label">--</span>
+          </div>
+        </div>
+      </div>
+      
+      <!-- Footer -->
+      <div class="bg-green-900 border-t border-green-500 p-1 text-xs text-green-400 text-center">
+        Use 1-${CAMERA_SYSTEM.cameras.length} keys to switch cameras
+      </div>
+    </div>
+  `;
+  
+  // Keyboard controls
+  win.addEventListener('keydown', (e) => {
+    const num = parseInt(e.key);
+    if (num >= 1 && num <= CAMERA_SYSTEM.cameras.length) {
+      switchCamera(CAMERA_SYSTEM.cameras[num-1].id);
+    }
+  });
+  
+  return win;
+}
+
+function switchCamera(cameraId) {
+  const cam = CAMERA_SYSTEM.cameras.find(c => c.id === cameraId);
+  if (!cam || activeCamera === cameraId) return;
+  
+  // Update active camera
+  activeCamera = cameraId;
+  
+  // Update UI
+  const cameraList = cameraWindow.querySelectorAll('#camera-list button');
+  cameraList.forEach(btn => {
+    btn.classList.remove('bg-green-900');
+    if (btn.textContent.includes(cameraId)) {
+      btn.classList.add('bg-green-900');
+    }
+  });
+  
+  document.getElementById('active-camera-label').textContent = cameraId;
+  
+  // Play switch sound and show static
+  playSound(CAMERA_SYSTEM.switchSound);
+  const staticOverlay = document.getElementById('static-overlay');
+  staticOverlay.style.opacity = '0.4';
+  
+  // Switch feed after delay
+  setTimeout(() => {
+    const feed = document.getElementById('camera-feed');
+    feed.src = cam.src + '?t=' + Date.now(); // Cache buster
+    
+    // Hide static
+    setTimeout(() => {
+      staticOverlay.style.opacity = '0';
+    }, 300);
+  }, 200);
+}
+
+function playSound(soundId, loop = false) {
+  const audio = document.getElementById(soundId);
+  if (!audio) return;
+  
+  audio.currentTime = 0;
+  audio.loop = loop;
+  audio.volume = loop ? 0.1 : 0.5;
+  audio.play().catch(() => {});
+}
+
         
         function selfDestruct() {
             window.open("https://www.youtube.com/watch?v=dQw4w9WgXcQ", "_blank");
@@ -591,37 +649,117 @@
             makeDraggable(solitaireWindow, solitaireHeader);
         }
         
-        function launchMalware() {
-            const malwareWindow = document.createElement('div');
-            malwareWindow.className = 'fixed bg-black border border-red-500 max-w-[90vw] max-h-[90vh] w-64 z-40 cursor-move window';
-            malwareWindow.style.top = '50%';
-            malwareWindow.style.left = '50%';
-            malwareWindow.style.transform = 'translate(-50%, -50%)';
-            
-            const malwareHeader = document.createElement('div');
-            malwareHeader.className = 'bg-red-900 text-red-500 p-2 flex justify-between items-center';
-            malwareHeader.innerHTML = `
-                <span>WARNING</span>
-                <button onclick="this.parentElement.parentElement.remove()" class="text-red-500 window-close">
-                    <i data-feather="x" class="w-4 h-4"></i>
-                </button>
-            `;
-            
-            const malwareContent = document.createElement('div');
-            malwareContent.className = 'p-4 h-full flex items-center justify-center';
-            malwareContent.innerHTML = `
-                <p class="text-red-500 text-center">System compromised.<br>Just kidding.</p>
-            `;
-            
-            malwareWindow.appendChild(malwareHeader);
-            malwareWindow.appendChild(malwareContent);
-            document.body.appendChild(malwareWindow);
-            feather.replace();
-            document.getElementById('click-sound').play();
-            
-            // Make window draggable
-            makeDraggable(malwareWindow, malwareHeader);
-        }
+        let virusSpawnSpeed = 5000; // Initial spawn speed in ms (5 seconds)
+        
+/* === YOU ARE AN IDIOT — drop-in replacement === */
+let virusActive = false;
+let virusSpawnDelay = 2000;               // starts slow, speeds up
+const VIRUS_MIN_DELAY = 250;              // how fast it can get
+const VIRUS_MAX_WINDOWS = 120;            // safety cap
+const virusWindows = new Set();
+
+function launchVirus() {
+  if (virusActive) return;                // only start once
+  virusActive = true;
+  loopIdiotSound(true);
+
+  // start with a few windows
+  for (let i = 0; i < 3; i++) spawnVirusWindow();
+
+  // self-accelerating spawner (like the classic)
+  scheduleNextSpawn();
+}
+
+function scheduleNextSpawn() {
+  if (!virusActive) return;
+  setTimeout(() => {
+    spawnVirusWindow();
+    virusSpawnDelay = Math.max(VIRUS_MIN_DELAY, virusSpawnDelay * 0.9); // speed up
+    scheduleNextSpawn();
+  }, virusSpawnDelay);
+}
+
+function spawnVirusWindow() {
+  if (virusWindows.size >= VIRUS_MAX_WINDOWS) return;
+
+  const win = document.createElement('div');
+  win.className = 'fixed bg-black border border-red-500 w-72 select-none window';
+  win.style.zIndex = 9998; // stays above your app windows, under CRT overlay
+  win.style.top  = Math.max(0, Math.random() * (window.innerHeight - 180)) + 'px';
+  win.style.left = Math.max(0, Math.random() * (window.innerWidth  - 280)) + 'px';
+  win.style.boxShadow = '0 0 12px rgba(255,0,0,.5)';
+
+win.innerHTML = `
+  <div class="drag-handle bg-red-900 text-red-500 p-2 flex justify-between items-center">
+    <span class="font-bold">YOU ARE AN IDIOT!</span>
+    <button class="close-btn text-red-300 hover:text-red-100">
+      <i data-feather="x" class="w-4 h-4"></i>
+    </button>
+  </div>
+  <div class="p-4 h-24 flex flex-col items-center justify-center text-center">
+    <div class="text-2xl text-red-500 animate-pulse leading-tight">YOU ARE<br>AN IDIOT!</div>
+  </div>
+`;
+
+  document.body.appendChild(win);
+  feather.replace();
+  virusWindows.add(win);
+
+  // make draggable via your existing helper
+  const header = win.querySelector('.drag-handle');
+  makeDraggable(win, header);
+
+  // bouncing movement like the original prank
+  const vx = (Math.random() * 1.5 + 0.8) * (Math.random() < 0.5 ? -1 : 1);
+  const vy = (Math.random() * 1.5 + 0.8) * (Math.random() < 0.5 ? -1 : 1);
+  startBouncing(win, vx, vy);
+
+  // close == it multiplies and speeds up (no inline onclick; bind properly)
+  win.querySelector('.close-btn').addEventListener('click', (e) => {
+    e.stopPropagation();
+    win.remove();
+    virusWindows.delete(win);
+    virusSpawnDelay = Math.max(VIRUS_MIN_DELAY, virusSpawnDelay * 0.7); // faster
+    spawnVirusWindow();
+    spawnVirusWindow();
+  });
+}
+
+function startBouncing(el, vx, vy) {
+  let x = el.offsetLeft;
+  let y = el.offsetTop;
+  const tick = () => {
+    if (!document.body.contains(el)) return;
+    const w = el.offsetWidth, h = el.offsetHeight;
+
+    x += vx; y += vy;
+
+    // bounce off edges (keep a little space above the taskbar)
+    if (x <= 0 || x + w >= window.innerWidth) {
+      vx *= -1; x = Math.max(0, Math.min(x, window.innerWidth - w));
+    }
+    if (y <= 0 || y + h >= window.innerHeight - 40) {
+      vy *= -1; y = Math.max(0, Math.min(y, window.innerHeight - h - 40));
+    }
+
+    el.style.left = x + 'px';
+    el.style.top  = y + 'px';
+
+    requestAnimationFrame(tick);
+  };
+  requestAnimationFrame(tick);
+}
+
+function loopIdiotSound(on){
+  const a = document.getElementById('idiot-sound');
+  if (!a) return;
+  a.loop = true;
+  a.volume = 0.35;
+  if (on) { a.currentTime = 0; a.play().catch(()=>{}); }
+  else { a.pause(); a.currentTime = 0; }
+}
+
+
         
         function launchChat() {
             const chatWindow = document.createElement('div');
@@ -913,113 +1051,110 @@
         const loginScreen = document.getElementById('login-screen');
         loginScreen.classList.add('hidden');
 
-// 🔐 User -> Page routes (add more users here)
-const ROUTES = {
-  Raven: { password: 'commandknowsbest', to: 'Raven.html' },
-  // Sigma: { password: 'sigma123', to: 'Sigma.html' },
-  // Viper: { password: 'viper123', to: 'Viper.html' },
-};
-
-document.getElementById('login-btn').addEventListener('click', function () {
-  const clickSound = document.getElementById('click-sound');
-  if (clickSound) { clickSound.currentTime = 0; clickSound.volume = 0.3; clickSound.play(); }
-
-  const username = (document.getElementById('username').value || '').trim();
-  const password = document.getElementById('password').value || '';
-
-  // 🔁 Route-based immediate redirects (e.g., Raven.html)
-  const route = ROUTES[username];
-  if (route && password === route.password) {
-    window.location.href = route.to;
-    return;
-  }
-
-  // ✅ Default desktop flow (Chaos_User)
-  if (username === 'Chaos_User' && password === 'password') {
-    const lock = document.getElementById('lock-sound');
-    const login = document.getElementById('login-sound');
-    if (lock) { lock.currentTime = 0; lock.volume = 0.3; lock.play(); }
-    if (login) { login.currentTime = 0; login.volume = 0.3; login.play(); }
-
-    // ================================
-    // Start login animation
-    // ================================
-    const loginScreen = document.getElementById('login-screen');
-    if (loginScreen) {
-      loginScreen.style.animation = 'loginFadeOut 0.5s forwards';
-    }
-
-    setTimeout(function () {
-      if (loginScreen) {
-        loginScreen.classList.add('hidden');
-        loginScreen.style.animation = '';
-      }
-
-      // ================================
-      // Show loading animation
-      // ================================
-      const loading = document.createElement('div');
-      loading.id = 'post-login-loading';
-      loading.className = 'fixed inset-0 flex items-center justify-center bg-black z-50';
-      loading.innerHTML = `
-        <div class="text-center">
-          <div class="w-16 h-16 border-4 border-green-500 border-t-transparent rounded-full animate-spin mb-4 mx-auto"></div>
-          <p class="text-green-500 text-xl">LOADING CHAOS INSURGENCY DESKTOP...</p>
-          <p class="text-green-500 mt-2" id="post-loading-percent">0%</p>
-        </div>
-      `;
-      document.body.appendChild(loading);
-
-      // Ambient / hum swap (optional)
-      const ambient = document.getElementById('loadambient-sound');
-      if (ambient) { ambient.currentTime = 0; ambient.volume = 0.1; ambient.loop = true; ambient.play(); }
-
-      // ================================
-      // Simulate loading progress
-      // ================================
-      let prog = 0;
-      const pct = document.getElementById('post-loading-percent');
-      const timer = setInterval(() => {
-        prog += Math.random() * 10;
-        if (prog >= 100) {
-          prog = 100;
-          clearInterval(timer);
-
-          setTimeout(() => {
-            // Fade out & reveal desktop
-            loading.style.transition = 'opacity 0.3s';
-            loading.style.opacity = '0';
-            setTimeout(() => {
-              loading.remove();
-              const desk = document.getElementById('desktop');
-              if (desk) desk.classList.remove('hidden');
-
-              // Stop ambient & start hum
-              if (ambient) { ambient.pause(); ambient.currentTime = 0; }
-              const hum = document.getElementById('hum-sound');
-              if (hum) { hum.volume = 0.1; hum.play(); }
-            }, 300);
-          }, 300);
-        }
-        if (pct) pct.textContent = `${Math.floor(prog)}%`;
-      }, 100);
-    }, 500);
-
-    return;
-  }
-
-  // ❌ Invalid credentials
-  const err = document.getElementById('error-sound');
-  if (err) { err.currentTime = 0; err.volume = 0.3; err.play(); }
-
-  const pwd = document.getElementById('password');
-  if (pwd) {
-    pwd.classList.add('border-red-500');
-    setTimeout(() => pwd.classList.remove('border-red-500'), 1000);
-  }
-  alert('ACCESS DENIED: Invalid credentials.');
-});
-
+        // Login functionality
+        document.getElementById('login-btn').addEventListener('click', function() {
+            const password = document.getElementById('password').value;
+            const clickSound = document.getElementById('click-sound');
+            clickSound.currentTime = 0;
+            clickSound.volume = 0.3;
+            clickSound.play();
+            
+            const username = document.getElementById('username').value;
+            if (username === 'Raven' && password === 'commandknowsbest') {
+                // Redirect to Raven.html
+                window.location.href = "Raven.html";
+                return;
+            } else if (username === 'Chaos_User' && password === 'password') {
+                document.getElementById('lock-sound').currentTime = 0;
+                document.getElementById('lock-sound').volume = 0.3;
+                document.getElementById('lock-sound').play();
+                document.getElementById('login-sound').currentTime = 0;
+                document.getElementById('login-sound').volume = 0.3;
+                document.getElementById('login-sound').play();
+                setTimeout(function() {
+                    // Start login animation
+                    const loginScreen = document.getElementById('login-screen');
+                    loginScreen.style.animation = 'loginFadeOut 0.5s forwards';
+                    
+                    setTimeout(function() {
+                        loginScreen.classList.add('hidden');
+                        loginScreen.style.animation = '';
+                        
+                        // Show loading animation
+                        const loading = document.createElement('div');
+                        loading.id = 'loading-screen';
+                        loading.className = 'fixed inset-0 flex items-center justify-center bg-black z-50';
+                        loading.innerHTML = `
+                            <div class="text-center">
+                                <div class="w-16 h-16 border-4 border-green-500 border-t-transparent rounded-full animate-spin mb-4 mx-auto"></div>
+                                <p class="text-green-500 text-xl">LOADING CHAOS INSURGENCY DESKTOP...</p>
+                                <p class="text-green-500 mt-2" id="loading-progress">0%</p>
+                            </div>
+                        `;
+                        document.body.appendChild(loading);
+                        
+                        // Simulate loading progress
+                        let progress = 0;
+                        const progressInterval = setInterval(function() {
+                            progress += Math.random() * 10;
+                            if (progress >= 100) {
+                                progress = 100;
+                                clearInterval(progressInterval);
+                                document.getElementById('loading-progress').textContent = `${progress}%`;
+                                
+                                setTimeout(function() {
+                                    loading.style.animation = 'fadeOut 0.3s forwards';
+                                    setTimeout(function() {
+                                        loading.remove();
+                                        document.getElementById('desktop').classList.remove('hidden');
+                                    }, 300);
+                                }, 500);
+                            }
+                            document.getElementById('loading-progress').textContent = `${Math.min(100, Math.floor(progress))}%`;
+                        }, 100);
+                    }, 500);
+                }, 500);
+            } else {
+                setTimeout(function() {
+                    document.getElementById('error-sound').play();
+                    document.getElementById('password').classList.add('border-red-500');
+                    
+                    // Create desktop popup error
+                    const errorPopup = document.createElement('div');
+                    errorPopup.className = 'fixed bg-black border border-red-500 max-w-[90vw] max-h-[90vh] w-64 z-40 cursor-move window';
+                    errorPopup.style.top = '50%';
+                    errorPopup.style.left = '50%';
+                    errorPopup.style.transform = 'translate(-50%, -50%)';
+                    
+                    const popupHeader = document.createElement('div');
+                    popupHeader.className = 'bg-red-900 text-red-500 p-2 flex justify-between items-center';
+                    popupHeader.innerHTML = `
+                        <span>ACCESS DENIED</span>
+                        <button onclick="this.parentElement.parentElement.remove()" class="text-red-500 window-close">
+                            <i data-feather="x" class="w-4 h-4"></i>
+                        </button>
+                    `;
+                    
+                    const popupContent = document.createElement('div');
+                    popupContent.className = 'p-4 h-full flex items-center justify-center';
+                    popupContent.innerHTML = `
+                        <p class="text-red-500 text-center">INVALID CREDENTIALS<br>ACCESS DENIED</p>
+                    `;
+                    
+                    errorPopup.appendChild(popupHeader);
+                    errorPopup.appendChild(popupContent);
+                    document.body.appendChild(errorPopup);
+                    feather.replace();
+                    
+                    // Make window draggable
+                    makeDraggable(errorPopup, popupHeader);
+                    
+                    setTimeout(function() {
+                        document.getElementById('password').classList.remove('border-red-500');
+                    }, 1000);
+                }, 500);
+            }
+        });
         
         // Terminal functions
         function launchTerminal() {
