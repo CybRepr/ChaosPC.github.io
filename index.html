@@ -913,110 +913,113 @@
         const loginScreen = document.getElementById('login-screen');
         loginScreen.classList.add('hidden');
 
-        // Login functionality
-        document.getElementById('login-btn').addEventListener('click', function() {
-            const password = document.getElementById('password').value;
-            const clickSound = document.getElementById('click-sound');
-            clickSound.currentTime = 0;
-            clickSound.volume = 0.3;
-            clickSound.play();
-            
-            const username = document.getElementById('username').value;
-            if (username === 'Raven' && password === 'commandknowsbest') {
-                // Redirect to Raven.html
-                window.location.href = "Raven.html";
-                return;
-            } else if (username === 'Chaos_User' && password === 'password') {
-                document.getElementById('lock-sound').currentTime = 0;
-                document.getElementById('lock-sound').volume = 0.3;
-                document.getElementById('lock-sound').play();
-                document.getElementById('login-sound').currentTime = 0;
-                document.getElementById('login-sound').volume = 0.3;
-                document.getElementById('login-sound').play();
-                setTimeout(function() {
-                    // Start login animation
-                    const loginScreen = document.getElementById('login-screen');
-                    loginScreen.style.animation = 'loginFadeOut 0.5s forwards';
-                    
-                    setTimeout(function() {
-                        loginScreen.classList.add('hidden');
-                        loginScreen.style.animation = '';
-                        
-                        // Show loading animation
-                        const loading = document.createElement('div');
-                        loading.id = 'loading-screen';
-                        loading.className = 'fixed inset-0 flex items-center justify-center bg-black z-50';
-                        loading.innerHTML = `
-                            <div class="text-center">
-                                <div class="w-16 h-16 border-4 border-green-500 border-t-transparent rounded-full animate-spin mb-4 mx-auto"></div>
-                                <p class="text-green-500 text-xl">LOADING CHAOS INSURGENCY DESKTOP...</p>
-                                <p class="text-green-500 mt-2" id="loading-progress">0%</p>
-                            </div>
-                        `;
-                        document.body.appendChild(loading);
-                        
-                        // Simulate loading progress
-                        let progress = 0;
-                        const progressInterval = setInterval(function() {
-                            progress += Math.random() * 10;
-                            if (progress >= 100) {
-                                progress = 100;
-                                clearInterval(progressInterval);
-                                document.getElementById('loading-progress').textContent = `${progress}%`;
-                                
-                                setTimeout(function() {
-                                    loading.style.animation = 'fadeOut 0.3s forwards';
-                                    setTimeout(function() {
-                                        loading.remove();
-                                        document.getElementById('desktop').classList.remove('hidden');
-                                    }, 300);
-                                }, 500);
-                            }
-                            document.getElementById('loading-progress').textContent = `${Math.min(100, Math.floor(progress))}%`;
-                        }, 100);
-                    }, 500);
-                }, 500);
-            } else {
-                setTimeout(function() {
-                    document.getElementById('error-sound').play();
-                    document.getElementById('password').classList.add('border-red-500');
-                    
-                    // Create desktop popup error
-                    const errorPopup = document.createElement('div');
-                    errorPopup.className = 'fixed bg-black border border-red-500 max-w-[90vw] max-h-[90vh] w-64 z-40 cursor-move window';
-                    errorPopup.style.top = '50%';
-                    errorPopup.style.left = '50%';
-                    errorPopup.style.transform = 'translate(-50%, -50%)';
-                    
-                    const popupHeader = document.createElement('div');
-                    popupHeader.className = 'bg-red-900 text-red-500 p-2 flex justify-between items-center';
-                    popupHeader.innerHTML = `
-                        <span>ACCESS DENIED</span>
-                        <button onclick="this.parentElement.parentElement.remove()" class="text-red-500 window-close">
-                            <i data-feather="x" class="w-4 h-4"></i>
-                        </button>
-                    `;
-                    
-                    const popupContent = document.createElement('div');
-                    popupContent.className = 'p-4 h-full flex items-center justify-center';
-                    popupContent.innerHTML = `
-                        <p class="text-red-500 text-center">INVALID CREDENTIALS<br>ACCESS DENIED</p>
-                    `;
-                    
-                    errorPopup.appendChild(popupHeader);
-                    errorPopup.appendChild(popupContent);
-                    document.body.appendChild(errorPopup);
-                    feather.replace();
-                    
-                    // Make window draggable
-                    makeDraggable(errorPopup, popupHeader);
-                    
-                    setTimeout(function() {
-                        document.getElementById('password').classList.remove('border-red-500');
-                    }, 1000);
-                }, 500);
-            }
-        });
+// 🔐 User -> Page routes (add more users here)
+const ROUTES = {
+  Raven: { password: 'commandknowsbest', to: 'Raven.html' },
+  // Sigma: { password: 'sigma123', to: 'Sigma.html' },
+  // Viper: { password: 'viper123', to: 'Viper.html' },
+};
+
+document.getElementById('login-btn').addEventListener('click', function () {
+  const clickSound = document.getElementById('click-sound');
+  if (clickSound) { clickSound.currentTime = 0; clickSound.volume = 0.3; clickSound.play(); }
+
+  const username = (document.getElementById('username').value || '').trim();
+  const password = document.getElementById('password').value || '';
+
+  // 🔁 Route-based immediate redirects (e.g., Raven.html)
+  const route = ROUTES[username];
+  if (route && password === route.password) {
+    window.location.href = route.to;
+    return;
+  }
+
+  // ✅ Default desktop flow (Chaos_User)
+  if (username === 'Chaos_User' && password === 'password') {
+    const lock = document.getElementById('lock-sound');
+    const login = document.getElementById('login-sound');
+    if (lock) { lock.currentTime = 0; lock.volume = 0.3; lock.play(); }
+    if (login) { login.currentTime = 0; login.volume = 0.3; login.play(); }
+
+    // ================================
+    // Start login animation
+    // ================================
+    const loginScreen = document.getElementById('login-screen');
+    if (loginScreen) {
+      loginScreen.style.animation = 'loginFadeOut 0.5s forwards';
+    }
+
+    setTimeout(function () {
+      if (loginScreen) {
+        loginScreen.classList.add('hidden');
+        loginScreen.style.animation = '';
+      }
+
+      // ================================
+      // Show loading animation
+      // ================================
+      const loading = document.createElement('div');
+      loading.id = 'post-login-loading';
+      loading.className = 'fixed inset-0 flex items-center justify-center bg-black z-50';
+      loading.innerHTML = `
+        <div class="text-center">
+          <div class="w-16 h-16 border-4 border-green-500 border-t-transparent rounded-full animate-spin mb-4 mx-auto"></div>
+          <p class="text-green-500 text-xl">LOADING CHAOS INSURGENCY DESKTOP...</p>
+          <p class="text-green-500 mt-2" id="post-loading-percent">0%</p>
+        </div>
+      `;
+      document.body.appendChild(loading);
+
+      // Ambient / hum swap (optional)
+      const ambient = document.getElementById('loadambient-sound');
+      if (ambient) { ambient.currentTime = 0; ambient.volume = 0.1; ambient.loop = true; ambient.play(); }
+
+      // ================================
+      // Simulate loading progress
+      // ================================
+      let prog = 0;
+      const pct = document.getElementById('post-loading-percent');
+      const timer = setInterval(() => {
+        prog += Math.random() * 10;
+        if (prog >= 100) {
+          prog = 100;
+          clearInterval(timer);
+
+          setTimeout(() => {
+            // Fade out & reveal desktop
+            loading.style.transition = 'opacity 0.3s';
+            loading.style.opacity = '0';
+            setTimeout(() => {
+              loading.remove();
+              const desk = document.getElementById('desktop');
+              if (desk) desk.classList.remove('hidden');
+
+              // Stop ambient & start hum
+              if (ambient) { ambient.pause(); ambient.currentTime = 0; }
+              const hum = document.getElementById('hum-sound');
+              if (hum) { hum.volume = 0.1; hum.play(); }
+            }, 300);
+          }, 300);
+        }
+        if (pct) pct.textContent = `${Math.floor(prog)}%`;
+      }, 100);
+    }, 500);
+
+    return;
+  }
+
+  // ❌ Invalid credentials
+  const err = document.getElementById('error-sound');
+  if (err) { err.currentTime = 0; err.volume = 0.3; err.play(); }
+
+  const pwd = document.getElementById('password');
+  if (pwd) {
+    pwd.classList.add('border-red-500');
+    setTimeout(() => pwd.classList.remove('border-red-500'), 1000);
+  }
+  alert('ACCESS DENIED: Invalid credentials.');
+});
+
         
         // Terminal functions
         function launchTerminal() {
