@@ -1,98 +1,74 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>CHAOS INSURGENCY TERMINAL - RAVEN</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>CHAOS INSURGENCY - USER DASHBOARD</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <script src="https://unpkg.com/feather-icons"></script>
-  <script src="https://cdn.jsdelivr.net/npm/feather-icons/dist/feather.min.js"></script>
   <style>
     @import url('https://fonts.googleapis.com/css2?family=VT323&display=swap');
-
     body {
       font-family: 'VT323', monospace;
       overflow: hidden;
-      background-color: #000;
+      background: #000;
       color: #0f0;
     }
-
     .grid-bg {
-      background-image: 
-        url('https://images-wixmp-ed30a86b8c4ca887773594c2.wixmp.com/f/18f8123e-b0de-4ea0-add1-845db168b004/dgcurdx-15724632-d02d-427d-acbf-2a4ac4a85e66.png/v1/fill/w_1280,h_857,q_80,strp/raven_bird_wallpaper_with_8k_and_ultra_hd_by_coder980_dgcurdx-fullview.jpg?token=eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ1cm46YXBwOjdlMGQxODg5ODIyNjQzNzNhNWYwZDQxNWVhMGQyNmUwIiwiaXNzIjoidXJuOmFwcDo3ZTBkMTg4OTgyMjY0MzczYTVmMGQ0MTVlYTBkMjZlMCIsIm9iaiI6W1t7ImhlaWdodCI6Ijw9ODU3IiwicGF0aCI6Ii9mLzE4ZjgxMjNlLWIwZGUtNGVhMC1hZGQxLTg0NWRiMTY4YjAwNC9kZ2N1cmR4LTE1NzI0NjMyLWQwMmQtNDI3ZC1hY2JmLTJhNGFjNGE4NWU2Ni5wbmciLCJ3aWR0aCI6Ijw9MTI4MCJ9XV0sImF1ZCI6WyJ1cm46c2VydmljZTppbWFnZS5vcGVyYXRpb25zIl19._sNtArHE38YwbIJ9G5fVwthxow8C3veznn7_kC7cJBw'),
-        linear-gradient(rgba(0, 255, 0, 0.05) 1px, transparent 1px),
-        linear-gradient(90deg, rgba(0, 255, 0, 0.05) 1px, transparent 1px);
-      background-size: cover, 20px 20px, 20px 20px;
-      background-blend-mode: overlay;
+      background-image:
+        linear-gradient(rgba(0,255,0,0.05) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(0,255,0,0.05) 1px, transparent 1px);
+      background-size: 20px 20px;
     }
-
     .crt-effect {
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
+      position: fixed; inset: 0;
       background:
-        linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.25) 50%),
-        linear-gradient(90deg, rgba(255, 0, 0, 0.06),
-                            rgba(0, 255, 0, 0.02),
-                            rgba(0, 0, 255, 0.06));
+        linear-gradient(rgba(18,16,16,0) 50%, rgba(0,0,0,0.25) 50%),
+        linear-gradient(90deg, rgba(255,0,0,0.06), rgba(0,255,0,0.02), rgba(0,0,255,0.06));
       background-size: 100% 2px, 3px 100%;
-      pointer-events: none;
-      z-index: 9999;
-      animation: flicker 0.15s infinite;
+      pointer-events: none; z-index: 9999;
+      animation: flicker .15s infinite;
     }
+    @keyframes flicker { 0%{opacity:.9} 50%{opacity:1} 100%{opacity:.9} }
 
-    @keyframes flicker {
-      0% { opacity: 0.9; }
-      50% { opacity: 1; }
-      100% { opacity: 0.9; }
+    .terminal-text { text-shadow: 0 0 5px #0f0; }
+    .desktop-background { position: fixed; inset: 0; display:flex; align-items:center; justify-content:center; pointer-events:none; z-index:0; }
+    .desktop-logo {
+      width: 420px; max-width: 55vmin; opacity:.5;
+      filter: drop-shadow(0 0 4px #fff) drop-shadow(0 0 8px rgba(0,255,0,.8))
+              drop-shadow(0 0 16px rgba(0,255,0,.6)) drop-shadow(0 0 24px rgba(0,255,0,.4));
     }
+    .icon { transition: all .3s ease-in-out; }
+    .icon:hover { filter: drop-shadow(0 0 8px rgba(0,255,0,.8)); transform: scale(1.05); }
 
-    .terminal-text {
-      text-shadow: 0 0 5px #0f0;
+    .window {
+      animation: windowOpen .25s ease-in-out forwards;
+      opacity: 0; transform: scale(.95);
+      user-select: none;
+      min-width: 300px; min-height: 200px;
+      resize: none; overflow: hidden;
     }
+    @keyframes windowOpen { to { opacity:1; transform:scale(1); } }
+    .window-close-anim { animation: windowClose .25s ease-in-out forwards; }
+    @keyframes windowClose { to { opacity:0; transform:scale(.95); } }
 
-    .btn-glow:hover { box-shadow: 0 0 10px #0f0; }
+    /* make content actually fill when resized/maximized */
+    .window > .frame { display:flex; flex-direction:column; width:100%; height:100%; }
+    .window .content { flex: 1 1 auto; min-height:0; overflow:auto; user-select:text; }
 
-    .desktop-background{
-      position: fixed; inset: 0; display:flex; align-items:center; justify-content:center;
-      pointer-events:none; z-index:0; /* sits behind icons */
-    }
+    /* resize handles */
+    .resize-handle { position:absolute; z-index:100; background:transparent; }
+    .resize-n { top:0; left:0; right:0; height:5px; cursor:n-resize; }
+    .resize-s { bottom:0; left:0; right:0; height:5px; cursor:s-resize; }
+    .resize-e { top:0; right:0; bottom:0; width:5px; cursor:e-resize; }
+    .resize-w { top:0; left:0; bottom:0; width:5px; cursor:w-resize; }
+    .resize-ne { top:0; right:0; width:10px; height:10px; cursor:ne-resize; }
+    .resize-nw { top:0; left:0; width:10px; height:10px; cursor:nw-resize; }
+    .resize-se { bottom:0; right:0; width:10px; height:10px; cursor:se-resize; }
+    .resize-sw { bottom:0; left:0; width:10px; height:10px; cursor:sw-resize; }
 
-    .desktop-logo{
-      width: 420px; max-width: 55vmin; opacity: .22;
-      /* white outline made from multi drop-shadows so it pops on dark bg */
-      filter:
-        drop-shadow( 0  0   0 #fff)     /* base edge */
-        drop-shadow( 1px  0 0 #fff)
-        drop-shadow(-1px  0 0 #fff)
-        drop-shadow( 0   1px 极 #fff)
-        drop-shadow( 0  -1px 0 #fff)
-        drop-shadow( 1px  1px 0 #fff)
-        drop-shadow(-1px -1px 0 #fff)
-        drop-shadow( 1px -1px 0 #fff)
-        drop-shadow(-1px  1px 0 #fff)
-        drop-shadow(0 0 18px rgba(0,255,0,.25)); /* faint green glow */
-    }
-
-    .icon { transition: all 0.3s ease-in-out; }
-    .icon:hover {
-      filter: drop-shadow(0 0 8px rgba(0, 255, 0, 0.8));
-      transform: scale(1.05);
-    }
-
-    @keyframes spin { from { transform: rotate(0); } to { transform: rotate(360deg); } }
-
-    /* Windows */
-    .window { animation: windowOpen 0.25s ease-in-out forwards; opacity: 0; transform: scale(0.95); }
-    @keyframes windowOpen { to { opacity: 1; transform: scale(1); } }
-    .window-close-anim { animation: windowClose 0.25s ease-in-out forwards; }
-    @keyframes windowClose { to { opacity: 0; transform: scale(0.95); } }
-
-    /* Clock blink */
     .cursor-blink { animation: blink 1s infinite ease-in-out; }
-    @keyframes blink { 0% {opacity: .2;} 50% {opacity:1;} 100% {opacity:.2;} }
+    @keyframes blink { 0%{opacity:.2} 50%{opacity:1} 100%{opacity:.2} }
   </style>
 </head>
 <body class="grid-bg h-screen overflow-hidden">
@@ -101,518 +77,95 @@
   <!-- Loading Screen -->
   <div id="loading-screen" class="fixed inset-0 bg-black z-50 flex items-center justify-center">
     <div class="text-center">
-      <div class="mb-4">
-        <img src="https://upload.wikimedia.org/wikipedia/commons/b/bf/Chaos_Insurgency_logo.png"
-             alt="Chaos Insurgency Logo"
-             class="mx-auto w-32 h-32 animate-pulse">
-      </div>
+      <img src="https://upload.wikimedia.org/wikipedia/commons/b/bf/Chaos_Insurgency_logo.png" class="mx-auto w-32 h-32 animate-pulse mb-4" alt="">
       <div class="text-green-500 text-xl mb-2">CHAOS INSURGENCY</div>
-      <div class="text-green-500 mb-8">GAINING BRAVO PERMS...</div>
+      <div class="text-green-500 mb-8">LOADING USER DASHBOARD...</div>
       <div class="w-64 h-1 bg-green-900 mx-auto overflow-hidden">
-        <div id="loading-progress" class="h-full bg-green-500" style="width: 0%"></div>
+        <div id="loading-progress" class="h-full bg-green-500" style="width:0%"></div>
       </div>
-      <div id="loading-status" class="text-green-500 text-sm mt-2">Initializing Raven access...</div>
+      <div id="loading-status" class="text-green-500 text-sm mt-2">Initializing user session...</div>
     </div>
   </div>
 
   <!-- Desktop -->
-  <div id="desktop" class="hidden h-full w-full p-4 relative" style="z-index: 1;">
-    <!-- Desktop Background Logo -->
-    <div class="desktop-background">
-        <img class="desktop-logo" src="https://upload.wikimedia.org/wikipedia/commons/b/bf/Chaos_Insurgency_logo.png" alt="Chaos Insurgency Logo">
+  <div id="desktop" class="hidden h-full w-full p-4 relative" style="z-index:1;">
+    <div class="desktop-background" id="desktop-bg">
+      <img class="desktop-logo" src="https://upload.wikimedia.org/wikipedia/commons/b/bf/Chaos_Insurgency_logo.png" alt="">
     </div>
+
     <!-- Taskbar -->
-    <div class="fixed bottom-0 left-0 right-0 h-10 bg-black bg-opacity-90 border-t border-green-500 flex items-center px-2 z-30">
-      <button class="h-8 w-8 bg-green-900 border border-green-500 flex items-center justify-center mr-2 hover:bg-green-800 transition-colors">
-        <img src="https://upload.wikimedia.org/wikipedia/commons/b/bf/Chaos_Insurgency_logo.png" alt="Start" class="w-5 h-5">
+    <div class="fixed bottom-0 left-0 right-0 h-10 bg-black/90 border-t border-green-500 flex items-center px-2 z-30">
+      <button class="h-8 w-8 bg-green-900 border border-green-500 flex items-center justify-center mr-2 hover:bg-green-800">
+        <img src="https://upload.wikimedia.org/wikipedia/commons/b/bf/Chaos_Insurgency_logo.png" class="w-5 h-5" alt="">
       </button>
-      <div class="ml-auto flex items-center bg-black bg-opacity-70 border border-green-500 px-3 py-1 text-green-500">
-        <i data-feather="clock" class="mr-2 w-4 h-4"></i>
-        <span id="clock">00:00:00</span>
+      <div id="taskbar-items" class="flex-1 flex items-center gap-1 px-2 overflow-x-auto"></div>
+      <div class="ml-auto flex items-center bg-black/70 border border-green-500 px-3 py-1 text-green-500">
+        <i data-feather="clock" class="mr-2 w-4 h-4"></i><span id="clock">00:00:00</span>
       </div>
     </div>
 
     <!-- Desktop Icons -->
-    <div class="absolute left-4 top-4 flex flex-col gap-6 w-32" style="bottom: 50px;">
-      <!-- Chaos Insurgency Database -->
-      <div class="icon group flex flex-col items-center cursor-pointer" onclick="launchTerminal()">
-        <div class="w-12 h-12 bg-green-900 border border-green-500 flex items-center justify-center mb-1 group-hover:bg-green-800 group-hover:border-green-300 transition-all duration-200">
-          <i data-feather="terminal" class="text-green-500 group-hover:text-green-300"></i>
+    <div id="desktop-icons" class="absolute left-4 top-4 flex flex-col gap-6 w-32" style="bottom:50px;">
+      <div class="icon group flex flex-col items-center cursor-pointer draggable-icon" data-icon-id="terminal" title="Open Terminal">
+        <div class="w-12 h-12 bg-green-900 border border-green-500 flex items-center justify-center mb-1">
+          <i data-feather="terminal" class="text-green-500"></i>
         </div>
-        <span class="text-green-500 text-center text-sm group-hover:text-green-300 group-hover:drop-shadow-[0_0_8px_rgba(0,255,0,0.8)] transition-all duration-200">Chaos Insurgency<br>Database</span>
+        <span class="text-green-500 text-center text-sm">Chaos Insurgency<br>Database</span>
       </div>
-      
-      <!-- Surveillance Control -->
-      <div class="icon group flex flex-col items-center cursor-pointer" onclick="launchSurveillance()">
-        <div class="w-12 h-12 bg-green-900 border border-green-500 flex items-center justify-center mb-1 group-hover:bg-green-800 group-hover:border-green-300 transition-all duration-200">
-          <i data-feather="video" class="text-green-500 group-hover:text-green-300"></i>
+      <div class="icon group flex flex-col items-center cursor-pointer draggable-icon" data-icon-id="bg-manager" title="Background Manager">
+        <div class="w-12 h-12 bg-green-900 border border-green-500 flex items-center justify-center mb-1">
+          <i data-feather="image" class="text-green-500"></i>
         </div>
-        <span class="text-green-500 text-center text-sm group-hover:text-green-300 group-hover:drop-shadow-[0_0_8px_rgba(0,255,0,0.8)] transition-all duration-200">Surveillance Control</span>
-      </div>
-      
-      <!-- SELF DESTRUCT -->
-      <div class="icon group flex flex-col items-center cursor-pointer" onclick="selfDestruct()" title="Are you sure about this?">
-        <div class="w-12 h-12 bg-red-900 border border-red-500 flex items-center justify-center mb-1 group-hover:bg-red-800 group-hover:border-red-300 transition-all duration-200">
-          <i data-feather="alert-octagon" class="text-red-500 group-hover:text-red-300"></i>
-        </div>
-        <span class="text-red-500 text-center text-sm group-hover:text-red-300 group-hover:drop-shadow-[0_0_8px_rgba(255,0,0,0.8)] transitionall duration-200">SELF DESTRUCT</span>
-      </div>
-      
-      <!-- Recruit Chat -->
-      <div class="icon group flex flex-col items-center cursor-pointer" onclick="launchChat()">
-        <div class="w-12 h-12 bg-green-900 border border-green-500 flex items-center justify-center mb-1 group-hover:bg-green-800 group-hover:border-green-300 transition-all duration-200">
-          <i data-feather="message-square" class="text-green-500 group-hover:text-green-300"></i>
-        </div>
-        <span class="text-green-500 text-center text-sm group-hover:text-green-300 group-hover:drop-shadow-[0_0_8px_rgba(0,255,0,0.8)] transition-all duration-200">Recruit Chat.exe</span>
-      </div>
-      
-      <!-- Chaos Solitaire -->
-      <div class="icon group flex flex-col items-center cursor-pointer" onclick="launchSolitaire()">
-        <div class="w-12 h-12 bg-green-900 border border-green-500 flex items-center justify-center mb-1 group-hover:bg-green-800 group-hover:border-green-300 transition-all duration-200">
-          <i data-feather="layers" class="text-green-500 group-hover:text-green-300"></i>
-        </div>
-        <span class="text-green-500 text-center text-sm group-hover:text-green-300 group-hover:drop-shadow-[0_0_8px_rgba(0,255,0,0.8)] transition-all duration-200">Chaos Solitaire</span>
-      </div>
-      
-      <!-- Totally Not Malware -->
-      <div class="icon group flex flex-col items-center cursor-pointer" onclick="launchMalware()">
-        <div class="w-12 h-12 bg-red-900 border border-red-500 flex items-center justify-center mb-1 group-hover:bg-red-800 group-hover:border-red-300 transition-all duration-200">
-          <i data-feather="alert-triangle" class="text-red-500 group-hover:text-red-300"></i>
-        </div>
-        <span class="text-red-500 text-center text-sm group-hover:text-red-300 group-hover:drop-shadow-[0_0_8px_rgba(255,0,0,0.8)] transition-all duration-200">Totally_Not_Malware.exe</span>
+        <span class="text-green-500 text-center text-sm">Background<br>Manager</span>
       </div>
     </div>
   </div>
-
-  <!-- Surveillance Window -->
-  <div id="surveillance-window" class="hidden fixed bg-black border border-green-500 max-w-[90vw] max-h-[90vh] w-96 z-40 cursor-move window">
-    <div class="bg-green-900 text-green-500 p-2 flex justify-between items-center">
-      <span>Surveillance Control</span>
-      <button onclick="closeSurveillance()" class="text-red-500 window-close">
-        <i data-feather="x" class="w-4 h-4"></i>
-      </button>
-    </div>
-    <div class="h-64 bg-black border-b border-green-500 flex items-center justify-center">
-      <img id="camera-feed" src="images/cam1.gif" class="h-full w-full object-contain" alt="Camera Feed">
-    </div>
-    <div class="p-2 flex justify-around">
-      <button onclick="switchCamera(1)" class="bg-green-900 hover:bg-green-800 text-green-500 px-3 py-1 border border-green-500">CAM1</button>
-      <button onclick="switchCamera(2)" class="bg-green-900 hover:bg-green-800 text-green-500 px-3 py-1 border border-green-500">CAM2</button>
-      <button onclick="switchCamera(3)" class="bg-green-900 hover:bg-green-800 text-green-500 px-3 py-1 border border-green-500">CAM3</button>
-      <button onclick="switchCamera(4)" class="bg-green-900 hover:bg-green-800 text-green-500 px-3 py-1 border border-green-500">CAM4</button>
-    </div>
-  </div>
-
-  <!-- Terminal Window -->
-  <div id="terminal-window" class="hidden fixed inset-0 bg-black bg-opacity-90 z-50 flex items-center justify-center p-4 window">
-    <div class="relative w-full max-w-[90vw] max-h-[90vh] bg-black border border-green-500 overflow-hidden flex flex-col">
-      <button onclick="closeTerminal()" class="absolute top-2 right-2 text-red-500 window-close">
-        <i data-feather="x" class="w-6 h-6"></i>
-      </button>
-      <div class="p-4 h-full overflow-y-auto terminal-text">
-        <pre class="text-green-500 text-lg">
-██████╗ ██╗  ██╗ █████╗  ██████╗ ███████╗
-██╔══██╗██║  ██║██╔══██╗██╔════╝ ██╔════╝
-██████╔╝███████║███████║██║  ███╗█████╗  
-██╔═══╝ ██╔══██║██╔══██║██║   ██║██╔══╝  
-██║     ██║  ██║██║  ██║╚██████╔╝███████╗
-╚═╝     ╚═╝  ╚═╝╚═╝  ╚═╝ ╚═════╝ ╚══════╝
-CHAOS INSURGENCY DATABASE TERMINAL v1.0
-        </pre>
-        <div id="terminal-content" class="mt-4">
-          <p class="text-green-500">> Welcome to Chaos Insurgency Database Terminal</p>
-          <p class="text-green-500">> Secondary authentication required</p>
-          <div class="mt-4">
-            <p class="text-green-500">Username: <input type="text" id="term-user" class="bg-black border-b border-green-500 text-green-500 px-2"></p>
-            <p class="text-green-500 mt-2">Password: <input type="password" id="term-pass" class="bg-black border-b border-green-500 text-green-500 px-2"></p>
-            <button id="term-login" class="mt-4 bg-green-900 hover:bg-green-800 text-green-500 py-1 px-4 border border-green-500 btn-glow">AUTHENTICATE</button>
-          </div>
-        </div>
-        <div id="terminal-commands" class="hidden mt-4">
-          <p class="text-green-500">> Type HELP for available commands</p>
-          <div class="mt-4 flex">
-            <span class="text-green-500">></span>
-            <input type="text" id="command-input" class="bg-black text-green-500 px-2 flex-grow" placeholder="Enter command...">
-            <span class="text-green-500 cursor-blink">_</span>
-          </div>
-          <div id="command-output" class="mt-4"></div>
-        </div>
-      </div>
-    </div>
-  </div>
-
 
   <!-- Audio -->
-  <audio id="boot-sound" src="Audio/boot.mp3" preload="auto"></audio>
   <audio id="click-sound" src="Audio/click.mp3" preload="auto"></audio>
-  <audio id="login-sound" src="Audio/login.mp3" preload="auto"></audio>
-  <audio id="error-sound" src="Audio/error.mp3" preload="auto"></audio>
-  <audio id="terminal-sound" src="Audio/terminal-loop.mp3" preload="auto" loop></audio>
   <audio id="window-open" src="Audio/window-open.mp3" preload="auto"></audio>
   <audio id="window-close" src="Audio/window-close.mp3" preload="auto"></audio>
-  <audio id="glitch-sound" src="Audio/glitch.mp3" preload="auto"></audio>
-  <audio id="typing-sound" src="Audio/typing.mp3" preload="auto"></audio>
-  <audio id="static-sound" src="Audio/static.mp3" preload="auto"></audio>
   <audio id="hum-sound" src="Audio/ambience-hum.mp3" preload="auto" loop></audio>
-  <audio id="keypress-sound" src="Audio/keypress.mp3" preload="auto"></audio>
-  <audio id="lock-sound" src="Audio/lock.mp3" preload="auto"></audio>
-  <audio id="loading-sound" src="Audio/loading.mp3" preload="auto"></audio>
-  <audio id="cam-switch" src="Audio/cam-switch.mp3" preload="auto"></audio>
 
   <script>
-    // Desktop shortcut functions
-    function selfDestruct() {
-      window.open("https://www.youtube.com/watch?v=dQw4w9WgXcQ", "_blank");
-      document.getElementById('click-sound').currentTime = 0;
-      document.getElementById('click-sound').volume = 0.3;
-      document.getElementById('click-sound').play();
-    }
-    
-    function launchChat() {
-      const chatWindow = document.createElement('div');
-      chatWindow.className = 'fixed bg-black border border-green-500 max-w-[90vw] max-h-[90vh] w-80 z-40 cursor-move window';
-      chatWindow.style.top = '50%';
-      chatWindow.style.left = '50%';
-      chatWindow.style.transform = 'translate(-50%, -50%)';
-      
-      const chatHeader = document.createElement('div');
-      chatHeader.className = 'bg-green-900 text-green-500 p-2 flex justify-between items-center';
-      chatHeader.innerHTML = `
-        <span>Recruit Chat.exe</span>
-        <button onclick="this.parentElement.parentElement.remove()" class="text-red-500 window-close">
-          <i data-feather="x" class="w-4 h-4"></i>
-        </button>
-      `;
-      
-      const chatContent = document.createElement('div');
-      chatContent.className = 'p-4 h-80 overflow-y-auto terminal-text';
-      chatContent.innerHTML = `
-        <p class="text-green-500">> Connecting to secure channel...</p>
-        <p class="text-green-500">> Connection established.</p>
-        <p class="text-green-500">> Priority channel: Site-66 operations</p>
-        <p class="text-green-500">> Last messages:</p>
-        <p class="text-green-500">[UNKNOWN_USER]: Did you see the size of that anomaly?</p>
-        <p class="text-green-500">[UNKNOWN_USER]: I swear the vending machine ate my ID card</p>
-        <p class="text-green-500">[UNKNOWN_USER]: Who took my coffee? This is an emergency!</p>
-        <p class="极green-500">[UNKNOWN_USER]: The janitor is acting sus again</p>
-        <p class="text-green-500">[UNKNOWN_USER]: Found a pizza in the containment chamber</p>
-        <p class="text-green-500">[UNKNOWN_USER]: Anyone else hearing screams or is it just me?</p>
-        <p class="text-green-500">[UNKNOWN_USER]: BRB, gotta contain my sanity</p>
-        <p class="text-green-500">[UNKNOWN_USER]: The walls are whispering memes</p>
-      `;
-      
-      const chatInput = document.createElement('div');
-      chatInput.className = 'p-2 border-t border-green-500 flex';
-      chatInput.innerHTML = `
-        <input type="text" id="chat-input" class="bg-black text-green-500 border border-green-500 px-2 py-1 flex-grow" placeholder="Type message...">
-        <button onclick="sendChatMessage()" class="bg-green-900 hover:bg-green-800 text-green-500 px-3 py-1 border border-green-500 ml-2">SEND</button>
-      `;
-      
-      chatWindow.appendChild(chatHeader);
-      chatWindow.appendChild(chatContent);
-      chatWindow.appendChild(chatInput);
-      document.body.appendChild(chatWindow);
-      feather.replace();
-      document.getElementById('click-sound').currentTime = 0;
-      document.getElementById('click-sound').volume = 0.3;
-      document.getElementById('click-sound').play();
-      document.getElementById('window-open').currentTime = 0;
-      document.getElementById('window-open').volume = 0.3;
-      document.getElementById('window-open').play();
-      
-      // Make window draggable
-      makeDraggable(chatWindow, chatHeader);
-      
-      // Auto-scroll to bottom
-      chatContent.scrollTop = chatContent.scrollHeight;
-      
-      // Auto-update chat with random messages
-      const funnyMessages = [
-        "The coffee machine is sentient I swear",
-        "Who keeps moving my chair?",
-        "Found a D-class playing solitaire with SCP-682",
-        "The vending machine took my money again",
-        "MTF stands for 'Missing The Fun' right?",
-        "Containment breach? Nah just Dave from accounting",
-        "Why does the cafeteria serve green jello?",
-        "I think the walls are watching me",
-        "The director just walked into a wall and disappeared",
-        "Found a pizza box in the incinerator",
-        "Who keeps setting all the clocks to 3:33 AM?",
-        "The janitor knows too much",
-        "I saw a guy in a chicken suit running down hall B",
-        "The water cooler is dispensing something... not water",
-        "Why do all the doors open by themselves at night?"
-      ];
-      
-      setInterval(() => {
-        if (Math.random() > 0.7) {
-          const message = funnyMessages[Math.floor(Math.random() * funnyMessages.length)];
-          const newMessage = document.createElement('p');
-          newMessage.className = 'text-green-500';
-          newMessage.textContent = `[UNKNOWN_USER]: ${message}`;
-          chatContent.appendChild(newMessage);
-          chatContent.scrollTop = chatContent.scrollHeight;
-        }
-      }, 10000);
-    }
-    
-    function sendChatMessage() {
-      const input = document.getElementById('chat-input');
-      if (input.value.trim() !== '') {
-        document.getElementById('error-sound').currentTime = 0;
-        document.getElementById('error-sound').volume = 0.3;
-        document.getElementById('error-sound').play();
-        const chatContent = document.querySelector('.terminal-text');
-        const errorMessage = document.createElement('p');
-        errorMessage.className = 'text-red-500';
-        errorMessage.textContent = '> ERROR: Invalid user credentials. Message not delivered.';
-        chatContent.appendChild(errorMessage);
-        chatContent.scrollTop = chatContent.scrollHeight;
-        input.value = '';
-      }
-    }
-    
-    function launchSolitaire() {
-      const solitaireWindow = document.createElement('div');
-      solitaireWindow.className = 'fixed bg-black border border-green-500 max-w-[90vw] max极h-[90vh] w-64 z-40 cursor-move window';
-      solitaireWindow.style.top = '50%';
-      solitaireWindow.style.left = '50%';
-      solitaireWindow.style.transform = 'translate(-50%, -50%)';
-      
-      const solitaireHeader = document.createElement('div');
-      solitaireHeader.className = 'bg-green-900 text-green-500 p-2 flex justify-between items-center';
-      solitaireHeader.innerHTML = `
-        <span>Chaos Solitaire</span>
-        <button onclick="this.parentElement.parentElement.remove()" class="text-red-500 window-close">
-          <i data-feather="x" class="w-4 h-4"></i>
-        </button>
-      `;
-      
-      const solitaireContent = document.createElement('div');
-      solitaireContent.className = 'p-4 h-full flex items-center justify-center';
-      solitaireContent.innerHTML = `
-        <p class="text-green-500 text-center">ERROR: Card textures missing.<br>Contact your local anomaly for assistance.</p>
-      `;
-      
-      solitaireWindow.appendChild(solitaireHeader);
-      solitaireWindow.appendChild(solitaireContent);
-      document.body.appendChild(solitaireWindow);
-      feather.replace();
-      document.getElementById('click-sound').currentTime = 0;
-      document.getElementById('click-sound').volume = 0.3;
-      document.getElementById('click-sound').play();
-      document.getElementById('window-open').currentTime = 0;
-      document.getElementById('window-open').volume = 0.3;
-      document.getElementById('window-open').play();
-      
-      // Make window draggable
-      makeDraggable(solitaireWindow, solitaireHeader);
-    }
-    
-    function launchMalware() {
-      const malwareWindow = document.createElement('div');
-      malwareWindow.className = 'fixed bg-black border border-red-500 max-w-[90vw] max-h-[90vh] w-64 z-40 cursor-move window';
-      malwareWindow.style.top = '50%';
-      malwareWindow.style.left = '50%';
-      malwareWindow.style.transform = 'translate(-50%, -50%)';
-      
-      const malwareHeader = document.createElement('div');
-      malwareHeader.className = 'bg-red-900 text-red-500 p-2 flex justify-between items-center';
-      malwareHeader.innerHTML = `
-        <span>WARNING</span>
-        <button onclick="this.parentElement.parentElement.remove()" class="text-red-500 window-close">
-          <i data-feather="x" class="w-4 h-4"></i>
-        </button>
-      `;
-      
-      const malwareContent = document.createElement('div');
-      malwareContent.className = 'p-4 h-full flex items-center justify-center';
-      malwareContent.innerHTML = `
-        <p class="text-red-500 text-center">System compromised.<br>Just kidding.</p>
-      `;
-      
-      malwareWindow.appendChild(malwareHeader);
-      malwareWindow.appendChild(malwareContent);
-      document.body.appendChild(malwareWindow);
-      feather.replace();
-      document.getElementById('click-sound').currentTime = 0;
-      document.getElementById('click-sound').volume = 0.3;
-      document.getElementById('click-sound').play();
-      document.getElementById('window-open').currentTime = 0;
-      document.getElementById('window-open').volume = 0.3;
-      document.getElementById('window-open').play();
-      
-      // Make window draggable
-      makeDraggable(malwareWindow, malwareHeader);
-    }
-    
-    function makeDraggable(element, header) {
-      let isDragging = false;
-      let offsetX, offsetY;
-      
-      header.addEventListener('mousedown', (e) => {
-        isDragging = true;
-        offsetX = e.clientX - element.getBoundingClientRect().left;
-        offsetY = e.clientY - element.getBoundingClientRect().top;
-        element.style.cursor = 'grabbing';
-      });
-      
-      document.addEventListener('mousemove', (e) => {
-        if (isDragging) {
-          let newLeft = e.clientX - offsetX;
-          let newTop = e.clientY - offsetY;
-          
-          // Keep window within viewport bounds
-          const rect = element.getBoundingClientRect();
-          const maxLeft = window.innerWidth - rect.width;
-          const maxTop = window.innerHeight - rect.height;
-          
-          newLeft = Math.max(0, Math.min(newLeft, maxLeft));
-          newTop = Math.max(0, Math.min(newTop, maxTop));
-          
-          element.style.left = new极eft + 'px';
-          element.style.top = newTop + 'px';
-        }
-      });
-      
-      document.addEventListener('mouseup', () => {
-        isDragging = false;
-        element.style.cursor = 'move';
-      });
-    }
-
-    // Surveillance functions
-    let currentFeed = 1;
-    let isDragging = false;
-    let offsetX, offsetY;
-
-    function launchSurveillance() {
-      document.getElementById('click-sound').currentTime = 0;
-      document.getElementById('click-sound').volume = 0.3;
-      document.getElementById('click-sound').play();
-      document.getElementById('window-open').currentTime = 0;
-      document.getElementById('window-open').volume = 0.3;
-      document.getElementById('window-open').play();
-      document.getElementById('surveillance-window').classList.remove('hidden');
-      document.getElementById('surveillance-window').classList.add('window');
-      feather.replace();
-    }
-
-    function closeSurveillance() {
-      document.getElementById('click-sound').currentTime = 0;
-      document.getElementById('click-sound').volume = 0.3;
-      document.getElementById('click-sound').play();
-      document.getElementById('window-close').currentTime = 0;
-      document.getElementById('window-close').volume = 0.3;
-      document.getElementById('window-close').play();
-      document.getElementById('surveillance-window').classList.add('window-close-anim');
-      setTimeout(() => {
-        document.getElementById('surveillance-window').classList.add('hidden');
-        document.getElementById('surveillance-window').classList.remove('window-close-anim');
-        document.getElementById('surveillance-window').classList.remove('window');
-      }, 250);
-    }
-
-    function switchCamera(camNum) {
-      document.getElementById('cam-switch').currentTime = 0;
-      document.getElementById('cam-switch').volume = 0.3;
-      document.getElementById('cam-switch').play();
-      currentFeed = camNum;
-      const feeds = {
-        1: 'images/cam1.gif',
-        2: 'images/cam2.jpg',
-        3: 'images/cam3.gif',
-        4: 'images/cam4.jpg'
-      };
-      document.getElementById('camera-feed').src = feeds[camNum];
-    }
-
-    // Make window draggable
-    const surveillanceHeader = document.querySelector('#surveillance-window > div:first-child');
-    const surveillanceWindow = document.getElementById('surveillance-window');
-
-    surveillanceHeader.addEventListener('mousedown', (e) => {
-      isDragging = true;
-      offsetX = e.clientX - surveillanceWindow.getBoundingClientRect().left;
-      offsetY = e.clientY - surveillanceWindow.getBoundingClientRect().top;
-      surveillanceWindow.style.cursor = 'grabbing';
-    });
-
-    document.addEventListener('mousemove', (e) => {
-      if (isDragging) {
-        let newLeft = e.clientX - offsetX;
-        let newTop = e.clientY - offsetY;
-        
-        const rect = surveillanceWindow.getBoundingClientRect();
-        const maxLeft = window.innerWidth - rect.width;
-        const maxTop = window.innerHeight - rect.height;
-        
-        newLeft = Math.max(0, Math.min(newLeft, maxLeft));
-        newTop = Math.max(0, Math.min(newTop, maxTop));
-        
-        surveillanceWindow.style.left = newLeft + 'px';
-        surveillanceWindow.style.top = newTop + 'px';
-      }
-    });
-
-    document.addEventListener('mouseup', () => {
-      isDragging = false;
-      surveillanceWindow.style.cursor = 'move';
-    });
-
-    document.addEventListener('DOMContentLoaded', () => {
-      startLoadingSequence();
-    });
+    /* -----------------------
+       BOOT / LOADING
+    ----------------------- */
+    document.addEventListener('DOMContentLoaded', startLoadingSequence);
 
     function startLoadingSequence() {
       const loadingScreen = document.getElementById('loading-screen');
       const loadingProgress = document.getElementById('loading-progress');
       const loadingStatus = document.getElementById('loading-status');
+      const desktopIcons = document.getElementById('desktop-icons');
 
-      // Play loading sound once
-      const loadingSound = document.getElementById('loading-sound');
-      loadingSound.currentTime = 0;
-      loadingSound.volume = 0.3;
-      loadingSound.play();
-      
-      // Set up ambient sound to play after loading sound finishes
-      loadingSound.onended = function() {
-        const ambientSound = document.getElementById('loadambient-sound');
-        ambientSound.currentTime = 0;
-        ambientSound.volume = 0.1;
-        ambientSound.loop = true;
-        ambientSound.play();
-      };
+      // prevent accidental selects on quick dblclick
+      desktopIcons.addEventListener('dblclick', (e) => { e.preventDefault(); e.stopPropagation(); });
 
       const messages = [
-        "Verifying Raven credentials...",
-        "Granting Bravo clearance...",
-        "Loading classified modules...",
-        "Accessing secure channels...",
-        "Establishing encrypted connection...",
-        "Welcome Bravo Unit 'Raven'"
+        "Verifying user credentials...",
+        "Loading personalized dashboard...",
+        "Accessing user-specific modules...",
+        "Establishing secure connection...",
+        "Welcome to your custom dashboard"
       ];
 
       let progress = 0;
       const interval = setInterval(() => {
         progress += Math.random() * 15;
         if (progress >= 100) {
-          progress = 100;
-          clearInterval(interval);
-          loadingStatus.textContent = "PERMS FOUND! WELCOME BRAVO UNIT 'RAVEN'";
+          progress = 100; clearInterval(interval);
+          loadingStatus.textContent = "DASHBOARD LOADED SUCCESSFULLY";
           setTimeout(() => {
+            loadingScreen.style.transition = 'opacity .5s';
             loadingScreen.style.opacity = '0';
-            loadingScreen.style.transition = 'opacity 0.5s';
             setTimeout(() => {
               loadingScreen.remove();
-              // Stop ambient sound and start hum sound
-              document.getElementById('loadambient-sound').pause();
-              document.getElementById('loadambient-sound').currentTime = 0;
-              
               document.getElementById('desktop').classList.remove('hidden');
               document.getElementById('hum-sound').volume = 0.1;
               document.getElementById('hum-sound').play();
+              setupDraggableIcons();
+              loadIconPositions();
             }, 500);
           }, 1000);
         }
@@ -623,250 +176,521 @@ CHAOS INSURGENCY DATABASE TERMINAL v1.0
         }
       }, 250);
 
-      updateClock();
-      setInterval(updateClock, 1000);
+      updateClock(); setInterval(updateClock, 1000);
       feather.replace();
+      loadBackground(); // ensure background loads early
     }
 
     function updateClock() {
       document.getElementById('clock').textContent = new Date().toLocaleTimeString();
     }
 
-    function launchTerminal() {
-      document.getElementById('terminal-window').classList.remove('hidden');
-      document.getElementById('terminal-sound').currentTime = 0;
-      document.getElementById('terminal-sound').volume = 0.2;
-      document.getElementById('terminal-sound').play();
-      document.getElementById('static-sound').currentTime = 0;
-      document.getElementById('static-sound').volume = 0.3;
-      document.getElementById('static-sound').play();
-    }
-    
-    function closeTerminal() {
-      const terminal = document.getElementById('terminal-window');
-      document.getElementById('static-sound').pause();
-      document.getElementById('static-sound').currentTime = 0;
-      terminal.classList.add('window-close-anim');
-      setTimeout(() => {
-        terminal.classList.add('hidden');
-        terminal.classList.remove('window-close-anim');
-        document.getElementById('terminal-sound').pause();
-        document.getElementById('terminal-sound').currentTime = 0;
-        
-        // Remove event listeners
-        const commandInput = document.getElementById('command-input');
-        if (commandInput) {
-            commandInput.removeEventListener('keydown', handleTerminalCommand);
-        }
-        
-        const termLogin = document.getElementById('term-login');
-        if (termLogin) {
-            termLogin.removeEventListener('click', handleTerminalLogin);
-        }
-      }, 250);
-    }
-    function handleTerminalLogin() {
-        const termUser = document.getElementById('term-user').value;
-        const termPass = document.getElementById('term-pass').value;
-        const clickSound = document.getElementById('click-sound');
-        clickSound.currentTime = 0;
-        clickSound.play();
-        
-        if ((termUser === 'Chaos_Guest' && termPass === 'Foxtrot') || (termUser && termPass)) {
-            setTimeout(function() {
-                document.getElementById('terminal-content').classList.add('hidden');
-                document.getElementById('terminal-commands').classList.remove('hidden');
-                document.getElementById('command-input').focus();
-            }, 500);
-        } else {
-            setTimeout(function() {
-                document.getElementById('error-sound').play();
-                alert("ACCESS DENIED: INSUFFICIENT CHAOS CLEARANCE");
-            }, 500);
-        }
+    /* -----------------------
+       WINDOW TEMPLATES (kept OFF-DOM)
+    ----------------------- */
+    // Terminal template (not appended; cloned on open)
+    const terminalTemplate = document.createElement('div');
+    terminalTemplate.className = 'hidden fixed top-20 left-20 z-50 window shadow-lg';
+    terminalTemplate.style.width = '600px';
+    terminalTemplate.style.height = '400px';
+    terminalTemplate.id = 'terminal-window-template';
+    terminalTemplate.innerHTML = `
+      <div class="frame bg-black border border-green-500">
+        <div class="bg-green-900 border-b border-green-500 p-2 flex justify-between items-center drag-handle">
+          <span class="text-green-500">Chaos Insurgency Database Terminal</span>
+          <div class="flex gap-1">
+            <button data-action="minimize" class="w-6 h-6 flex items-center justify-center hover:bg-green-800"><i data-feather="minus" class="text-green-500 w-4 h-4"></i></button>
+            <button data-action="maximize" class="w-6 h-6 flex items-center justify-center hover:bg-green-800"><i data-feather="maximize-2" class="text-green-500 w-4 h-4"></i></button>
+            <button data-action="close" class="w-6 h-6 flex items-center justify-center hover:bg-red-700"><i data-feather="x" class="text-green-500 w-4 h-4"></i></button>
+          </div>
+        </div>
+        <div class="content p-4 terminal-text">
+          <pre class="text-green-500 text-lg">
+██████╗ ██╗  ██╗  █████╗   ██████╗  ███████╗
+██╔══██╗██║  ██║██╔══██╗██╔════╝ ██╔════╝
+██████╔╝███████║███████║██║  ███╗█████╗  
+██╔═══╝ ██╔══██║██╔══██║██║   ██║██╔══╝  
+██║     ██║   ██║██║  ██║╚██████╔╝███████╗
+╚═╝     ╚═╝   ╚═╝╚═╝  ╚═╝ ╚═════╝ ╚══════╝
+CHAOS INSURGENCY DATABASE TERMINAL v1.0
+          </pre>
+          <div class="mt-4">
+            <p class="text-green-500">> Welcome to Chaos Insurgency Database Terminal</p>
+            <p class="text-green-500">> Type HELP for available commands</p>
+            <div class="mt-4 flex">
+              <span class="text-green-500">></span>
+              <input type="text" class="bg-black text-green-500 px-2 flex-grow focus:outline-none" placeholder="Enter command..." id="command-input">
+              <span class="text-green-500 cursor-blink">_</span>
+            </div>
+            <div id="command-output" class="mt-4"></div>
+          </div>
+        </div>
+      </div>
+    `;
+
+    // Background Manager template (not appended; cloned on open)
+    const bgManagerTemplate = document.createElement('div');
+    bgManagerTemplate.className = 'hidden fixed top-20 left-20 z-50 window shadow-lg';
+    bgManagerTemplate.style.width = '600px';
+    bgManagerTemplate.style.height = '400px';
+    bgManagerTemplate.id = 'bg-manager-window-template';
+    bgManagerTemplate.innerHTML = `
+      <div class="frame bg-black border border-green-500">
+        <div class="bg-green-900 border-b border-green-500 p-2 flex justify-between items-center drag-handle">
+          <span class="text-green-500">Background Manager</span>
+          <div class="flex gap-1">
+            <button data-action="minimize" class="w-6 h-6 flex items-center justify-center hover:bg-green-800"><i data-feather="minus" class="text-green-500 w-4 h-4"></i></button>
+            <button data-action="maximize" class="w-6 h-6 flex items-center justify-center hover:bg-green-800"><i data-feather="maximize-2" class="text-green-500 w-4 h-4"></i></button>
+            <button data-action="close" class="w-6 h-6 flex items-center justify-center hover:bg-red-700"><i data-feather="x" class="text-green-500 w-4 h-4"></i></button>
+          </div>
+        </div>
+        <div class="content p-4">
+          <h2 class="text-green-500 text-xl mb-4">Background Manager</h2>
+          <div class="mb-4">
+            <label class="block text-green-500 mb-2">Image URL:</label>
+            <input type="text" id="bg-url" class="w-full bg-black border border-green-500 text-green-500 px-2 py-1 mb-2">
+            <button id="bg-set" class="bg-green-900 border border-green-500 text-green-500 px-4 py-1 hover:bg-green-800">Set Background</button>
+          </div>
+          <button id="bg-clear" class="bg-red-900 border border-red-500 text-red-500 px-4 py-1 hover:bg-red-800">Clear to Default</button>
+        </div>
+      </div>
+    `;
+
+    /* -----------------------
+       WINDOW ENGINE
+    ----------------------- */
+    function initWindowBehavior(win, idForTaskbar) {
+      const header = win.querySelector('.drag-handle');
+      makeDraggable(win, header);
+      addResizeHandles(win);
+
+      win.querySelectorAll('[data-action]').forEach(btn => {
+        const action = btn.dataset.action;
+        btn.addEventListener('click', (e) => {
+          e.stopPropagation();
+          if (action === 'minimize') minimizeWindow(win, idForTaskbar);
+          if (action === 'maximize') toggleMaximizeElement(win);
+          if (action === 'close') closeWindowByElement(win, idForTaskbar);
+        });
+      });
+
+      win.addEventListener('mousedown', () => bringToFront(win));
     }
 
-    function handleTerminalCommand(e) {
-        if (e.key !== 'Enter') {
-            document.getElementById('typing-sound').currentTime = 0;
-            document.getElementById('typing-sound').volume = 0.2;
-            document.getElementById('typing-sound').play();
+    function bringToFront(win) {
+      document.querySelectorAll('.window').forEach(w => w.style.zIndex = '1');
+      win.style.zIndex = '50';
+    }
+
+    function minimizeWindow(win, idForTaskbar) {
+      win.classList.add('hidden');
+      const item = document.querySelector(`#taskbar-item-${idForTaskbar}`);
+      if (item) item.classList.remove('bg-green-700');
+    }
+
+    function toggleMaximizeElement(win) {
+      const wasMax = win.classList.contains('maximized');
+      if (wasMax) {
+        win.classList.remove('maximized');
+        win.style.width  = win.dataset.lastWidth  || '600px';
+        win.style.height = win.dataset.lastHeight || '400px';
+        win.style.top    = win.dataset.lastTop    || '20px';
+        win.style.left   = win.dataset.lastLeft   || '20px';
+      } else {
+        win.dataset.lastLeft   = win.style.left;
+        win.dataset.lastTop    = win.style.top;
+        win.dataset.lastWidth  = win.style.width;
+        win.dataset.lastHeight = win.style.height;
+        win.classList.add('maximized');
+        win.style.width  = 'calc(100vw - 8px)';
+        win.style.height = 'calc(100vh - 50px)'; // leave room for taskbar
+        win.style.top = '4px';
+        win.style.left = '4px';
+      }
+    }
+
+    function closeWindowByElement(win, idForTaskbar) {
+      win.classList.add('window-close-anim');
+      setTimeout(() => {
+        win.remove();
+        removeFromTaskbar(idForTaskbar);
+        const s = document.getElementById('window-close'); if (s) s.play();
+      }, 250);
+    }
+
+    // convenience for inline calls
+    function closeWindow(windowId) {
+      const win = document.getElementById(`${windowId}-window`);
+      if (!win) return;
+      closeWindowByElement(win, windowId);
+    }
+
+    function addResizeHandles(win) {
+      if (win.dataset.resizers === '1') return;
+      const dirs = ['nw','n','ne','e','se','s','sw','w'];
+      dirs.forEach(dir => {
+        const h = document.createElement('div');
+        h.className = `resize-handle resize-${dir}`;
+        win.appendChild(h);
+        h.addEventListener('mousedown', e => startResize(e, win, dir));
+      });
+      win.dataset.resizers = '1';
+    }
+
+    function startResize(e, win, dir) {
+      e.preventDefault(); e.stopPropagation();
+      bringToFront(win);
+      const startX = e.clientX, startY = e.clientY;
+      const rect = win.getBoundingClientRect();
+      const start = { w: rect.width, h: rect.height, l: rect.left, t: rect.top };
+
+      function onMove(ev) {
+        const dx = ev.clientX - startX;
+        const dy = ev.clientY - startY;
+        let w = start.w, h = start.h, l = start.l, t = start.t;
+
+        if (dir.includes('e')) w = Math.max(300, start.w + dx);
+        if (dir.includes('s')) h = Math.max(200, start.h + dy);
+        if (dir.includes('w')) { w = Math.max(300, start.w - dx); l = start.l + dx; }
+        if (dir.includes('n')) { h = Math.max(200, start.h - dy); t = start.t + dy; }
+
+        l = Math.max(0, Math.min(l, window.innerWidth - w));
+        t = Math.max(0, Math.min(t, window.innerHeight - h));
+
+        Object.assign(win.style, {
+          width: w + 'px', height: h + 'px',
+          left: l + 'px', top: t + 'px',
+          position: 'fixed'
+        });
+      }
+      function onUp() {
+        document.removeEventListener('mousemove', onMove);
+        document.removeEventListener('mouseup', onUp);
+      }
+      document.addEventListener('mousemove', onMove);
+      document.addEventListener('mouseup', onUp);
+    }
+
+    function makeDraggable(win, handle) {
+      let isDragging = false, offX = 0, offY = 0;
+      handle.style.cursor = 'move';
+
+      handle.addEventListener('mousedown', (e) => {
+        if (e.button !== 0) return;
+        isDragging = true;
+        bringToFront(win);
+        const rect = win.getBoundingClientRect();
+        offX = e.clientX - rect.left;
+        offY = e.clientY - rect.top;
+        win.style.position = 'fixed';
+        win.style.transition = 'none';
+        document.body.style.userSelect = 'none';
+        e.preventDefault();
+      });
+
+      document.addEventListener('mousemove', (e) => {
+        if (!isDragging) return;
+        let l = e.clientX - offX;
+        let t = e.clientY - offY;
+        l = Math.max(0, Math.min(l, window.innerWidth - win.offsetWidth));
+        t = Math.max(0, Math.min(t, window.innerHeight - win.offsetHeight));
+        win.style.left = l + 'px';
+        win.style.top  = t + 'px';
+      });
+
+      document.addEventListener('mouseup', () => {
+        if (!isDragging) return;
+        isDragging = false;
+        document.body.style.userSelect = 'auto';
+        win.style.transition = 'all .2s ease';
+      });
+    }
+
+    /* -----------------------
+       ICONS (drag + dblclick)
+    ----------------------- */
+    function setupDraggableIcons() {
+      const icons = document.querySelectorAll('.draggable-icon');
+      icons.forEach(icon => {
+        makeDraggable(icon, icon);
+        icon.addEventListener('dblclick', () => {
+          const id = icon.dataset.iconId;
+          if (id === 'terminal') launchTerminal();
+          if (id === 'bg-manager') launchBgManager();
+        });
+      });
+      setupAutoSaveIcons();
+    }
+
+    function saveIconPositions() {
+      const icons = document.querySelectorAll('.draggable-icon');
+      const pos = {};
+      icons.forEach(icon => {
+        pos[icon.dataset.iconId] = { left: icon.style.left, top: icon.style.top, position: 'absolute' };
+      });
+      localStorage.setItem('iconPositions', JSON.stringify(pos));
+    }
+    function loadIconPositions() {
+      const saved = localStorage.getItem('iconPositions');
+      if (!saved) return;
+      const pos = JSON.parse(saved);
+      Object.keys(pos).forEach(id => {
+        const el = document.querySelector(`[data-icon-id="${id}"]`);
+        if (el) {
+          el.style.position = 'absolute';
+          if (pos[id].left) el.style.left = pos[id].left;
+          if (pos[id].top)  el.style.top  = pos[id].top;
         }
-        if (e.key === 'Enter') {
-            const clickSound = document.getElementById('click-sound');
-            clickSound.currentTime = 0;
-            clickSound.play();
-            
-            const input = this.value;
-            const upperInput = input.toUpperCase();
-            const output = document.getElementById('command-output');
-            
-            // Handle download command (case-insensitive)
-            if (upperInput.startsWith('DOWNLOAD ')) {
-                const filename = input.substring(9).trim().toLowerCase();
-                output.innerHTML += `<p class="text-green-500">> ${input}</p>`;
-                
-                if (personnelFiles.hasOwnProperty(filename)) {
-                    output.innerHTML += `<p class="text-green-500">Downloading ${filename}...</p>`;
-                    downloadFile(filename, personnelFiles[filename]);
-                } else {
-                    output.innerHTML += `<p class="text-red-500">ERROR: File not found. Use PERSONNEL_FILES to see available files.</p>`;
-                }
-            }
-            // Handle regular commands (case-insensitive)
-            else if (commands.hasOwnProperty(upperInput)) {
-                if (upperInput === 'CLEAR') {
-                    output.innerHTML = '';
-                } else {
-                    output.innerHTML += `<p class="text-green-500">> ${input}</p>`;
-                    output.innerHTML += `<p class="text-green-500">${commands[upperInput]}</p>`;
-                }
-            } else {
-                output.innerHTML += `<p class="text-green-500">> ${input}</p>`;
-                output.innerHTML += `<p class="text-red-500">ERROR: Unknown command. Type HELP for available commands.</p>`;
-            }
-            
-            this.value = '';
-            output.scrollTop = output.scrollHeight;
+      });
+    }
+    function setupAutoSaveIcons() {
+      document.querySelectorAll('.draggable-icon').forEach(icon => {
+        icon.addEventListener('mouseup', (e) => {
+          if (!e.detail || e.detail < 2) saveIconPositions();
+        });
+      });
+    }
+
+    /* -----------------------
+       BACKGROUND
+    ----------------------- */
+    function setCustomBackground(win) {
+      const urlInput = win.querySelector('#bg-url');
+      const url = (urlInput?.value || '').trim();
+      if (!url) return;
+
+      if (!/^https?:\/\/.+\..+/.test(url)) {
+        alert('Please enter a valid image URL (must start with http:// or https://)');
+        return;
+      }
+
+      const testImg = new Image();
+      testImg.onload = function () {
+        localStorage.setItem('customBackground', url);
+        const bg = document.getElementById('desktop-bg');
+        bg.innerHTML = '';
+        const img = document.createElement('img');
+        img.src = url;
+        img.className = 'w-full h-full object-cover';
+        img.onerror = clearBackground;
+        bg.appendChild(img);
+      };
+      testImg.onerror = function () {
+        alert('Failed to load image. Please check the URL and try again.');
+      };
+      testImg.src = url;
+    }
+
+    function clearBackground() {
+      localStorage.removeItem('customBackground');
+      const bg = document.getElementById('desktop-bg');
+      bg.innerHTML = '';
+      const img = document.createElement('img');
+      img.src = 'https://upload.wikimedia.org/wikipedia/commons/b/bf/Chaos_Insurgency_logo.png';
+      img.className = 'desktop-logo';
+      bg.appendChild(img);
+    }
+
+    function loadBackground() {
+      const saved = localStorage.getItem('customBackground');
+      if (saved) {
+        const bg = document.getElementById('desktop-bg');
+        bg.innerHTML = '';
+        const img = document.createElement('img');
+        img.src = saved;
+        img.className = 'w-full h-full object-cover';
+        img.onerror = clearBackground;
+        bg.appendChild(img);
+      }
+    }
+
+    /* -----------------------
+       TASKBAR
+    ----------------------- */
+    function addToTaskbar(id, name, win) {
+      const bar = document.getElementById('taskbar-items');
+      let item = document.querySelector(`#taskbar-item-${id}`);
+      if (!item) {
+        item = document.createElement('div');
+        item.id = `taskbar-item-${id}`;
+        item.className = 'flex items-center h-8 px-2 bg-green-900 border border-green-500 text-green-500 cursor-pointer hover:bg-green-800';
+        let icon = '';
+        if (id === 'terminal') icon = '<i data-feather="terminal" class="w-4 h-4 mr-2"></i>';
+        if (id === 'bg-manager') icon = '<i data-feather="image" class="w-4 h-4 mr-2"></i>';
+        item.innerHTML = `${icon}<span>${name}</span>`;
+        bar.appendChild(item);
+        feather.replace();
+
+        item.addEventListener('click', () => {
+          const hidden = win.classList.contains('hidden');
+          if (hidden) {
+            win.classList.remove('hidden');
+            bringToFront(win);
+            item.classList.add('bg-green-700');
+            const s = document.getElementById('window-open'); if (s) s.play();
+          } else {
+            minimizeWindow(win, id);
+          }
+        });
+
+        win.addEventListener('mousedown', () => {
+          document.querySelectorAll('#taskbar-items > div').forEach(el => el.classList.remove('bg-green-700'));
+          item.classList.add('bg-green-700');
+        });
+      } else {
+        item.classList.add('bg-green-700');
+      }
+    }
+    function removeFromTaskbar(id) {
+      const item = document.querySelector(`#taskbar-item-${id}`);
+      if (item) item.remove();
+    }
+
+    /* -----------------------
+       TERMINAL & FILES
+    ----------------------- */
+    const personnelFiles = {
+      'mufflindoe.txt': 'https://raw.githubusercontent.com/CybRepr/ChaosPC.github.io/main/mufflindoe.txt'
+    };
+    const commands = {
+      'HELP': 'Available commands: RECRUIT_LIST, SABOTAGE_PROTOCOL, FOUNDATION_SURVEILLANCE, PERSONNEL_FILES, DOWNLOAD [filename], CLEAR',
+      'RECRUIT_LIST': 'Agent List:\n- Agent "Sigma"\n- Agent "Rook"\n- Agent "Viper"\n- Agent "Spectre"\n- Agent "Mirage"',
+      'SABOTAGE_PROTOCOL': 'Operations: Site-19 infiltration, Area-12 surveillance, Site-64 neutralized. Next: Site-76',
+      'FOUNDATION_SURVEILLANCE': 'SCP-173: Contained\nSCP-682: Breach attempt\nSCP-106: Active\nSCP-049: Research ongoing',
+      'PERSONNEL_FILES': () => `Available Personnel Files:\n- ${Object.keys(personnelFiles).join('\n- ')}`,
+      'CLEAR': ''
+    };
+
+    function wireTerminalIO(win) {
+      const input = win.querySelector('#command-input');
+      const output = win.querySelector('#command-output');
+      if (!input || !output) return;
+
+      input.addEventListener('keydown', (e) => {
+        if (e.key !== 'Enter') return;
+        const raw = input.value;
+        const cmd = raw.toUpperCase();
+        if (cmd.startsWith('DOWNLOAD ')) {
+          const filename = raw.substring(9).trim().toLowerCase();
+          output.innerHTML += `<p class="text-green-500">> ${raw}</p>`;
+          if (personnelFiles[filename]) {
+            downloadFile(filename, personnelFiles[filename]);
+          } else {
+            output.innerHTML += `<p class="text-red-500">ERROR: File not found. Use PERSONNEL_FILES to see available files.</p>`;
+          }
+        } else if (commands[cmd] !== undefined) {
+          output.innerHTML += `<p class="text-green-500">> ${raw}</p>`;
+          const val = typeof commands[cmd] === 'function' ? commands[cmd]() : commands[cmd];
+          if (cmd === 'CLEAR') output.innerHTML = '';
+          else output.innerHTML += `<p class="text-green-500" style="white-space:pre-wrap">${val}</p>`;
+        } else {
+          output.innerHTML += `<p class="text-green-500">> ${raw}</p><p class="text-red-500">ERROR: Unknown command.</p>`;
         }
+        input.value = '';
+        output.scrollTop = output.scrollHeight;
+      });
     }
 
     function downloadFile(filename, url) {
-        // Create file icon on desktop
-        const desktop = document.getElementById('desktop');
-        const fileIcon = document.createElement('div');
-        fileIcon.className = 'icon group flex flex-col items-center cursor-pointer absolute';
-        fileIcon.style.left = Math.random() * (window.innerWidth - 100) + 'px';
-        fileIcon.style.top = Math.random() * (window.innerHeight - 150) + 'px';
-        fileIcon.innerHTML = `
-            <div class="w-12 h-12 bg-blue-900 border border-blue-500 flex items-center justify-center mb-1 group-hover:bg-blue-800 group-hover:border-blue-300 transition-all duration-200">
-                <i data-feather="file-text" class="text-blue-500 group-hover:text-blue-300"></i>
-            </div>
-            <span class="text-blue-500 text-center text-sm group-hover:text-blue-300 group-hover:drop-shadow-[0_0_8px_rgba(0,0,255,0.8)] transition-all duration-200">${filename}</span>
-        `;
-        
-        fileIcon.onclick = function() {
-            fetchFileContent(url);
-        };
-        
-        desktop.appendChild(fileIcon);
-        feather.replace();
-        
-        const output = document.getElementById('command-output');
-        output.innerHTML += `<p class="text-green-500">Download complete. File icon added to desktop.</p>`;
-        output.scrollTop = output.scrollHeight;
+      const desktop = document.getElementById('desktop');
+      const fileIcon = document.createElement('div');
+      fileIcon.className = 'icon group flex flex-col items-center cursor-pointer absolute';
+      fileIcon.style.left = Math.random() * (window.innerWidth - 100) + 'px';
+      fileIcon.style.top  = Math.random() * (window.innerHeight - 150) + 'px';
+      fileIcon.innerHTML = `
+        <div class="w-12 h-12 bg-blue-900 border border-blue-500 flex items-center justify-center mb-1">
+          <i data-feather="file-text" class="text-blue-500"></i>
+        </div>
+        <span class="text-blue-500 text-center text-sm">${filename}</span>`;
+      fileIcon.onclick = () => fetchFileContent(url);
+      desktop.appendChild(fileIcon);
+      feather.replace();
+      const termOut = document.getElementById('command-output');
+      if (termOut) termOut.innerHTML += `<p class="text-green-500">Download complete. File icon added to desktop.</p>`;
     }
 
     function fetchFileContent(url) {
-        // Create loading window
-        const loadingWindow = document.createElement('div');
-        loadingWindow.className = 'fixed bg-black border border-green-500 max-w-[90vw] max-h-[90vh] w-96 z-40 cursor-move window';
-        loadingWindow.style.top = '50%';
-        loadingWindow.style.left = '50%';
-        loadingWindow.style.transform = 'translate(-50%, -50%)';
-        
-        loadingWindow.innerHTML = `
-            <div class="bg-green-900 text-green-500 p-2 flex justify-between items-center">
-                <span>Loading File...</span>
-                <button onclick="this.parentElement.parentElement.remove()" class="text-red-500 window-close">
-                    <i data-feather="x" class="w-4 h-4"></i>
-                </button>
-            </div>
-            <div class="p-4 h-64 flex items-center justify-center">
-                <p class="text-green-500">Connecting to secure server...</p>
-            </div>
-        `;
-        
-        document.body.appendChild(loadingWindow);
-        feather.replace();
-        
-        // Fetch content from Pastebin
-        fetch(url)
-            .then(response => response.text())
-            .then(content => {
-                loadingWindow.remove();
-                displayFileContent(content);
-            })
-            .catch(error => {
-                loadingWindow.remove();
-                const errorWindow = document.createElement('div');
-                errorWindow.className = 'fixed bg-black border border-red-500 max-w-[90vw] max-h-[90vh] w-96 z-40 cursor-move window';
-                errorWindow.style.top = '50%';
-                errorWindow.style.left = '50%';
-                errorWindow.style.transform = 'translate(-50%, -50%)';
-                
-                errorWindow.innerHTML = `
-                    <div class="bg-red-900 text-red-500 p-2 flex justify-between items-center">
-                        <span>ERROR</span>
-                        <button onclick="this.parentElement.parentElement.remove()" class="text-red-500 window-close">
-                            <i data-feather="x" class="w-4 h-4"></极button>
-                    </div>
-                    <div class="p-4 h-64 flex items-center justify-center">
-                        <p class="text-red-500">Failed to load file content.</p>
-                    </div>
-                `;
-                
-                document.body.appendChild(errorWindow);
-                feather.replace();
-            });
+      fetch(url).then(r => r.text()).then(displayFileContent).catch(() => alert('Failed to load file'));
     }
 
     function displayFileContent(content) {
-        // Parse BBCode and convert to HTML with better handling
-        let htmlContent = content
-            .replace(/\[b\](.*?)\[\/b\]/gis, '<strong>$1</strong>')
-            .replace(/\[i\](.*?)\[\/i\]/gis, '<em>$1</em>')
-            .replace(/\[u\](.*?)\[\/u\]/gis, '<u>$1</u>')
-            .replace(/\[color=(.*?)\](.*?)\[\/color\]/gis, '<span style="color: $1">$2</span>')
-            .replace(/\[size=(.*?)\](.*?)\[\/size\]/gis, '<span style="font-size: $1px">$2</span>')
-            .replace(/\[quote\](.*?)\[\/quote\]/gis, '<div class="quote-block">$1</div>')
-            .replace(/\n/g, '<br>');
-        
-        // Create file content window
-        const fileWindow = document.createElement('div');
-        fileWindow.className = 'fixed bg-black border border-green-500 max-w-[90vw] max-h-[90vh] w-3/4 z-40 cursor-move window';
-        fileWindow.style.top = '50%';
-        fileWindow.style.left = '50%';
-        fileWindow.style.transform = 'translate(-50%, -50%)';
-        
-        fileWindow.innerHTML = `
-            <div class="bg-green-900 text-green-500 p-2 flex justify-between items-center drag-handle">
-                <span>Personnel File</span>
-                <button onclick="this.parentElement.parentElement.remove()" class="text-red-500 window-close">
-                    <i data-feather="x" class="w-4 h-4"></i>
-                </button>
+      const html = content
+        .replace(/\[b\](.*?)\[\/b\]/gi, '<strong>$1</strong>')
+        .replace(/\n/g, '<br>');
+      const win = document.createElement('div');
+      win.id = 'personnel-file-window';
+      win.className = 'fixed top-24 left-24 z-50 window shadow-lg';
+      win.style.width = '600px'; win.style.height = '400px';
+      win.innerHTML = `
+        <div class="frame bg-black border border-green-500">
+          <div class="bg-green-900 border-b border-green-500 p-2 flex justify-between items-center drag-handle">
+            <span class="text-green-500">Personnel File</span>
+            <div class="flex gap-1">
+              <button data-action="minimize" class="w-6 h-6 flex items-center justify-center hover:bg-green-800"><i data-feather="minus" class="text-green-500 w-4 h-4"></i></button>
+              <button data-action="maximize" class="w-6 h-6 flex items-center justify-center hover:bg-green-800"><i data-feather="maximize-2" class="text-green-500 w-4 h-4"></i></button>
+              <button data-action="close" class="w-6 h-6 flex items-center justify-center hover:bg-red-700"><i data-feather="x" class="text-green-500 w-4 h-4"></i></button>
             </div>
-            <div class="p-4 h-96 overflow-y-auto terminal-text" style="color: #0f0; text-shadow: 0 0 5px #0f0;">
-                ${htmlContent}
-            </div>
-        `;
-        
-        document.body.appendChild(fileWindow);
+          </div>
+          <div class="content p-4 terminal-text">${html}</div>
+        </div>`;
+      document.body.appendChild(win);
+      feather.replace();
+      initWindowBehavior(win, 'personnel-file');
+      bringToFront(win);
+    }
+
+    /* -----------------------
+       LAUNCHERS
+    ----------------------- */
+    function launchTerminal() {
+      let win = document.getElementById('terminal-window');
+      if (!win) {
+        win = terminalTemplate.cloneNode(true);
+        win.id = 'terminal-window';
+        win.classList.remove('hidden');
+        document.body.appendChild(win);
         feather.replace();
-        
-        // Make window draggable
-        const header = fileWindow.querySelector('.drag-handle');
-        makeDraggable(fileWindow, header);
-        
-        // Add CSS for quote blocks if not already exists
-        if (!document.getElementById('quote-style')) {
-            const style = document.createElement('style');
-            style.id = 'quote-style';
-            style.textContent = `
-                .quote-block {
-                    border-left: 3px solid #0f0;
-                    padding-left: 10px;
-                    margin: 10px 0;
-                    background: rgba(0, 255, 0, 0.1);
-                    padding: 8px;
-                    font-style: italic;
-                }
-                strong { font-weight: bold; }
-                em { font-style: italic; }
-                u { text-decoration: underline; }
-            `;
-            document.head.appendChild(style);
+        initWindowBehavior(win, 'terminal');
+        wireTerminalIO(win);
+      } else {
+        win.classList.remove('hidden');
+      }
+      bringToFront(win);
+      addToTaskbar('terminal', 'Terminal', win);
+      const s = document.getElementById('window-open'); if (s) s.play();
+      setTimeout(() => win.querySelector('#command-input')?.focus(), 50);
+    }
+
+    function launchBgManager() {
+      let win = document.getElementById('bg-manager-window');
+      if (!win) {
+        win = bgManagerTemplate.cloneNode(true);
+        win.id = 'bg-manager-window';
+        win.classList.remove('hidden');
+        document.body.appendChild(win);
+        feather.replace();
+        initWindowBehavior(win, 'bg-manager');
+
+        // wire background controls (SCOPED TO THIS WINDOW)
+        const bgSet   = win.querySelector('#bg-set');
+        const bgClear = win.querySelector('#bg-clear');
+        const bgUrl   = win.querySelector('#bg-url');
+
+        if (bgSet)   bgSet.addEventListener('click', () => setCustomBackground(win));
+        if (bgClear) bgClear.addEventListener('click', clearBackground);
+        if (bgUrl) {
+          bgUrl.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') setCustomBackground(win);
+          });
+          const saved = localStorage.getItem('customBackground');
+          if (saved) bgUrl.value = saved;
         }
+      } else {
+        win.classList.remove('hidden');
+      }
+      bringToFront(win);
+      addToTaskbar('bg-manager', 'BG Manager', win);
+      const s = document.getElementById('window-open'); if (s) s.play();
     }
   </script>
 </body>
