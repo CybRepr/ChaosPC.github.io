@@ -55,6 +55,27 @@
 
     .btn-glow:hover { box-shadow: 0 0 10px #0f0; }
 
+    .desktop-background{
+      position: fixed; inset: 0; display:flex; align-items:center; justify-content:center;
+      pointer-events:none; z-index:0; /* sits behind icons */
+    }
+
+    .desktop-logo{
+      width: 420px; max-width: 55vmin; opacity: .22;
+      /* white outline made from multi drop-shadows so it pops on dark bg */
+      filter:
+        drop-shadow( 0  0   0 #fff)     /* base edge */
+        drop-shadow( 1px  0 0 #fff)
+        drop-shadow(-1px  0 0 #fff)
+        drop-shadow( 0   1px 极 #fff)
+        drop-shadow( 0  -1px 0 #fff)
+        drop-shadow( 1px  1px 0 #fff)
+        drop-shadow(-1px -1px 0 #fff)
+        drop-shadow( 1px -1px 0 #fff)
+        drop-shadow(-1px  1px 0 #fff)
+        drop-shadow(0 0 18px rgba(0,255,0,.25)); /* faint green glow */
+    }
+
     .icon { transition: all 0.3s ease-in-out; }
     .icon:hover {
       filter: drop-shadow(0 0 8px rgba(0, 255, 0, 0.8));
@@ -95,7 +116,11 @@
   </div>
 
   <!-- Desktop -->
-  <div id="desktop" class="hidden h-full w-full p-4 relative">
+  <div id="desktop" class="hidden h-full w-full p-4 relative" style="z-index: 1;">
+    <!-- Desktop Background Logo -->
+    <div class="desktop-background">
+        <img class="desktop-logo" src="https://upload.wikimedia.org/wikipedia/commons/b/bf/Chaos_Insurgency_logo.png" alt="Chaos Insurgency Logo">
+    </div>
     <!-- Taskbar -->
     <div class="fixed bottom-0 left-0 right-0 h-10 bg-black bg-opacity-90 border-t border-green-500 flex items-center px-2 z-30">
       <button class="h-8 w-8 bg-green-900 border border-green-500 flex items-center justify-center mr-2 hover:bg-green-800 transition-colors">
@@ -204,7 +229,6 @@ CHAOS INSURGENCY DATABASE TERMINAL v1.0
           </div>
         </div>
         <div id="terminal-commands" class="hidden mt-4">
-          <p class="text-green-500">> Authentication successful. Welcome, Agent.</p>
           <p class="text-green-500">> Type HELP for available commands</p>
           <div class="mt-4 flex">
             <span class="text-green-500">></span>
@@ -546,9 +570,20 @@ CHAOS INSURGENCY DATABASE TERMINAL v1.0
       const loadingProgress = document.getElementById('loading-progress');
       const loadingStatus = document.getElementById('loading-status');
 
-      document.getElementById('loading-sound').currentTime = 0;
-      document.getElementById('loading-sound').volume = 0.3;
-      document.getElementById('loading-sound').play();
+      // Play loading sound once
+      const loadingSound = document.getElementById('loading-sound');
+      loadingSound.currentTime = 0;
+      loadingSound.volume = 0.3;
+      loadingSound.play();
+      
+      // Set up ambient sound to play after loading sound finishes
+      loadingSound.onended = function() {
+        const ambientSound = document.getElementById('loadambient-sound');
+        ambientSound.currentTime = 0;
+        ambientSound.volume = 0.1;
+        ambientSound.loop = true;
+        ambientSound.play();
+      };
 
       const messages = [
         "Verifying Raven credentials...",
@@ -571,6 +606,10 @@ CHAOS INSURGENCY DATABASE TERMINAL v1.0
             loadingScreen.style.transition = 'opacity 0.5s';
             setTimeout(() => {
               loadingScreen.remove();
+              // Stop ambient sound and start hum sound
+              document.getElementById('loadambient-sound').pause();
+              document.getElementById('loadambient-sound').currentTime = 0;
+              
               document.getElementById('desktop').classList.remove('hidden');
               document.getElementById('hum-sound').volume = 0.1;
               document.getElementById('hum-sound').play();
@@ -613,9 +652,222 @@ CHAOS INSURGENCY DATABASE TERMINAL v1.0
         terminal.classList.remove('window-close-anim');
         document.getElementById('terminal-sound').pause();
         document.getElementById('terminal-sound').currentTime = 0;
+        
+        // Remove event listeners
+        const commandInput = document.getElementById('command-input');
+        if (commandInput) {
+            commandInput.removeEventListener('keydown', handleTerminalCommand);
+        }
+        
+        const termLogin = document.getElementById('term-login');
+        if (termLogin) {
+            termLogin.removeEventListener('click', handleTerminalLogin);
+        }
       }, 250);
+    }
+    function handleTerminalLogin() {
+        const termUser = document.getElementById('term-user').value;
+        const termPass = document.getElementById('term-pass').value;
+        const clickSound = document.getElementById('click-sound');
+        clickSound.currentTime = 0;
+        clickSound.play();
+        
+        if ((termUser === 'Chaos_Guest' && termPass === 'Foxtrot') || (termUser && termPass)) {
+            setTimeout(function() {
+                document.getElementById('terminal-content').classList.add('hidden');
+                document.getElementById('terminal-commands').classList.remove('hidden');
+                document.getElementById('command-input').focus();
+            }, 500);
+        } else {
+            setTimeout(function() {
+                document.getElementById('error-sound').play();
+                alert("ACCESS DENIED: INSUFFICIENT CHAOS CLEARANCE");
+            }, 500);
+        }
+    }
+
+    function handleTerminalCommand(e) {
+        if (e.key !== 'Enter') {
+            document.getElementById('typing-sound').currentTime = 0;
+            document.getElementById('typing-sound').volume = 0.2;
+            document.getElementById('typing-sound').play();
+        }
+        if (e.key === 'Enter') {
+            const clickSound = document.getElementById('click-sound');
+            clickSound.currentTime = 0;
+            clickSound.play();
+            
+            const input = this.value;
+            const upperInput = input.toUpperCase();
+            const output = document.getElementById('command-output');
+            
+            // Handle download command (case-insensitive)
+            if (upperInput.startsWith('DOWNLOAD ')) {
+                const filename = input.substring(9).trim().toLowerCase();
+                output.innerHTML += `<p class="text-green-500">> ${input}</p>`;
+                
+                if (personnelFiles.hasOwnProperty(filename)) {
+                    output.innerHTML += `<p class="text-green-500">Downloading ${filename}...</p>`;
+                    downloadFile(filename, personnelFiles[filename]);
+                } else {
+                    output.innerHTML += `<p class="text-red-500">ERROR: File not found. Use PERSONNEL_FILES to see available files.</p>`;
+                }
+            }
+            // Handle regular commands (case-insensitive)
+            else if (commands.hasOwnProperty(upperInput)) {
+                if (upperInput === 'CLEAR') {
+                    output.innerHTML = '';
+                } else {
+                    output.innerHTML += `<p class="text-green-500">> ${input}</p>`;
+                    output.innerHTML += `<p class="text-green-500">${commands[upperInput]}</p>`;
+                }
+            } else {
+                output.innerHTML += `<p class="text-green-500">> ${input}</p>`;
+                output.innerHTML += `<p class="text-red-500">ERROR: Unknown command. Type HELP for available commands.</p>`;
+            }
+            
+            this.value = '';
+            output.scrollTop = output.scrollHeight;
+        }
+    }
+
+    function downloadFile(filename, url) {
+        // Create file icon on desktop
+        const desktop = document.getElementById('desktop');
+        const fileIcon = document.createElement('div');
+        fileIcon.className = 'icon group flex flex-col items-center cursor-pointer absolute';
+        fileIcon.style.left = Math.random() * (window.innerWidth - 100) + 'px';
+        fileIcon.style.top = Math.random() * (window.innerHeight - 150) + 'px';
+        fileIcon.innerHTML = `
+            <div class="w-12 h-12 bg-blue-900 border border-blue-500 flex items-center justify-center mb-1 group-hover:bg-blue-800 group-hover:border-blue-300 transition-all duration-200">
+                <i data-feather="file-text" class="text-blue-500 group-hover:text-blue-300"></i>
+            </div>
+            <span class="text-blue-500 text-center text-sm group-hover:text-blue-300 group-hover:drop-shadow-[0_0_8px_rgba(0,0,255,0.8)] transition-all duration-200">${filename}</span>
+        `;
+        
+        fileIcon.onclick = function() {
+            fetchFileContent(url);
+        };
+        
+        desktop.appendChild(fileIcon);
+        feather.replace();
+        
+        const output = document.getElementById('command-output');
+        output.innerHTML += `<p class="text-green-500">Download complete. File icon added to desktop.</p>`;
+        output.scrollTop = output.scrollHeight;
+    }
+
+    function fetchFileContent(url) {
+        // Create loading window
+        const loadingWindow = document.createElement('div');
+        loadingWindow.className = 'fixed bg-black border border-green-500 max-w-[90vw] max-h-[90vh] w-96 z-40 cursor-move window';
+        loadingWindow.style.top = '50%';
+        loadingWindow.style.left = '50%';
+        loadingWindow.style.transform = 'translate(-50%, -50%)';
+        
+        loadingWindow.innerHTML = `
+            <div class="bg-green-900 text-green-500 p-2 flex justify-between items-center">
+                <span>Loading File...</span>
+                <button onclick="this.parentElement.parentElement.remove()" class="text-red-500 window-close">
+                    <i data-feather="x" class="w-4 h-4"></i>
+                </button>
+            </div>
+            <div class="p-4 h-64 flex items-center justify-center">
+                <p class="text-green-500">Connecting to secure server...</p>
+            </div>
+        `;
+        
+        document.body.appendChild(loadingWindow);
+        feather.replace();
+        
+        // Fetch content from Pastebin
+        fetch(url)
+            .then(response => response.text())
+            .then(content => {
+                loadingWindow.remove();
+                displayFileContent(content);
+            })
+            .catch(error => {
+                loadingWindow.remove();
+                const errorWindow = document.createElement('div');
+                errorWindow.className = 'fixed bg-black border border-red-500 max-w-[90vw] max-h-[90vh] w-96 z-40 cursor-move window';
+                errorWindow.style.top = '50%';
+                errorWindow.style.left = '50%';
+                errorWindow.style.transform = 'translate(-50%, -50%)';
+                
+                errorWindow.innerHTML = `
+                    <div class="bg-red-900 text-red-500 p-2 flex justify-between items-center">
+                        <span>ERROR</span>
+                        <button onclick="this.parentElement.parentElement.remove()" class="text-red-500 window-close">
+                            <i data-feather="x" class="w-4 h-4"></极button>
+                    </div>
+                    <div class="p-4 h-64 flex items-center justify-center">
+                        <p class="text-red-500">Failed to load file content.</p>
+                    </div>
+                `;
+                
+                document.body.appendChild(errorWindow);
+                feather.replace();
+            });
+    }
+
+    function displayFileContent(content) {
+        // Parse BBCode and convert to HTML with better handling
+        let htmlContent = content
+            .replace(/\[b\](.*?)\[\/b\]/gis, '<strong>$1</strong>')
+            .replace(/\[i\](.*?)\[\/i\]/gis, '<em>$1</em>')
+            .replace(/\[u\](.*?)\[\/u\]/gis, '<u>$1</u>')
+            .replace(/\[color=(.*?)\](.*?)\[\/color\]/gis, '<span style="color: $1">$2</span>')
+            .replace(/\[size=(.*?)\](.*?)\[\/size\]/gis, '<span style="font-size: $1px">$2</span>')
+            .replace(/\[quote\](.*?)\[\/quote\]/gis, '<div class="quote-block">$1</div>')
+            .replace(/\n/g, '<br>');
+        
+        // Create file content window
+        const fileWindow = document.createElement('div');
+        fileWindow.className = 'fixed bg-black border border-green-500 max-w-[90vw] max-h-[90vh] w-3/4 z-40 cursor-move window';
+        fileWindow.style.top = '50%';
+        fileWindow.style.left = '50%';
+        fileWindow.style.transform = 'translate(-50%, -50%)';
+        
+        fileWindow.innerHTML = `
+            <div class="bg-green-900 text-green-500 p-2 flex justify-between items-center drag-handle">
+                <span>Personnel File</span>
+                <button onclick="this.parentElement.parentElement.remove()" class="text-red-500 window-close">
+                    <i data-feather="x" class="w-4 h-4"></i>
+                </button>
+            </div>
+            <div class="p-4 h-96 overflow-y-auto terminal-text" style="color: #0f0; text-shadow: 0 0 5px #0f0;">
+                ${htmlContent}
+            </div>
+        `;
+        
+        document.body.appendChild(fileWindow);
+        feather.replace();
+        
+        // Make window draggable
+        const header = fileWindow.querySelector('.drag-handle');
+        makeDraggable(fileWindow, header);
+        
+        // Add CSS for quote blocks if not already exists
+        if (!document.getElementById('quote-style')) {
+            const style = document.createElement('style');
+            style.id = 'quote-style';
+            style.textContent = `
+                .quote-block {
+                    border-left: 3px solid #0f0;
+                    padding-left: 10px;
+                    margin: 10px 0;
+                    background: rgba(0, 255, 0, 0.1);
+                    padding: 8px;
+                    font-style: italic;
+                }
+                strong { font-weight: bold; }
+                em { font-style: italic; }
+                u { text-decoration: underline; }
+            `;
+            document.head.appendChild(style);
+        }
     }
   </script>
 </body>
 </html>
-
